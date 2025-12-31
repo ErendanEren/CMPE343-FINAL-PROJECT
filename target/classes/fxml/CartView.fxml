@@ -8,7 +8,10 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.materialfx.controls.MFXTextField?>
 
 <BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.CartViewController">
     <center>
@@ -27,6 +30,13 @@
     <bottom>
         <VBox alignment="CENTER_RIGHT" spacing="10.0" BorderPane.alignment="CENTER">
             <children>
+                <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                    <children>
+                        <MFXTextField fx:id="txtCouponCode" floatingText="Coupon Code" prefWidth="150.0" />
+                        <MFXButton fx:id="btnApplyCoupon" onAction="#handleApplyCoupon" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Apply Coupon" />
+                    </children>
+                </HBox>
+                <Label fx:id="lblCouponMessage" />
                 <Label fx:id="totalPriceLabel" text="Total: 0.00 TL">
                     <font>
                         <Font name="System Bold" size="18.0" />

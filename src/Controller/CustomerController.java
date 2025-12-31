@@ -11,6 +11,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 
+import Dao.DBProductDAO;
+import Dao.ProductDAO;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
@@ -34,6 +36,7 @@ public class CustomerController implements Initializable {
 
     // In-memory list to hold products until DB is connected
     private ObservableList<Product> allProducts = FXCollections.observableArrayList();
+    private ProductDAO productDAO = new DBProductDAO();
 
     /**
      * Initializes the controller class.
@@ -41,8 +44,8 @@ public class CustomerController implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // 1. Load data (Simulator)
-        loadDummyData();
+        // 1. Load data (DB)
+        loadData();
 
         // 2. Display initial data sorted by name
         refreshProductDisplays("");
@@ -112,20 +115,10 @@ public class CustomerController implements Initializable {
     }
 
     /**
-     * Generates dummy data for testing without a database.
-     * Simulates the 12 vegetables and 12 fruits requirement.
+     * Loads products from the database.
      */
-    private void loadDummyData() {
-        // Vegetables
-        allProducts.add(new Product(1, "Tomato", "VEGETABLE", 25.0, 50, 10, "tomato.jpg"));
-        allProducts.add(new Product(2, "Potato", "VEGETABLE", 15.0, 4, 5, "potato.jpg")); // Low stock! Price should double
-        allProducts.add(new Product(3, "Cucumber", "VEGETABLE", 20.0, 30, 5, "cucumber.jpg"));
-        allProducts.add(new Product(4, "Onion", "VEGETABLE", 12.0, 40, 8, "onion.jpg"));
-
-        // Fruits
-        allProducts.add(new Product(5, "Apple", "FRUIT", 35.0, 100, 20, "apple.jpg"));
-        allProducts.add(new Product(6, "Banana", "FRUIT", 45.0, 10, 15, "banana.jpg")); // Low stock!
-        allProducts.add(new Product(7, "Orange", "FRUIT", 30.0, 60, 10, "orange.jpg"));
+    private void loadData() {
+        allProducts.setAll(productDAO.getAllProducts());
     }
 
     /**
