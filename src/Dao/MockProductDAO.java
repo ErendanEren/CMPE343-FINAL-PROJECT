@@ -8,8 +8,8 @@ public class MockProductDAO implements ProductDAO {
     private static List<Product> dummyDB = new ArrayList<>();
 
     static {
-        dummyDB.add(new Product("Elma", "FRUIT", 25.50, 100, 20, "elma.png"));
-        dummyDB.add(new Product("Domates", "VEGETABLE", 30.0, 50, 10, "domates.png"));
+        dummyDB.add(new Product(1, "Elma", "FRUIT", 25.50, 100, 20, "elma.png"));
+        dummyDB.add(new Product(2, "Domates", "VEGETABLE", 30.0, 50, 10, "domates.png"));
     }
 
     @Override

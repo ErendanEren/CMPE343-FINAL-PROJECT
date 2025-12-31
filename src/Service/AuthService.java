@@ -34,15 +34,18 @@ public class AuthService {
     }
 
     public boolean register(String username, String password, String fullName, String phone, String email, String address) {
-        // Basic check if user exists (should ideally be done in DB/DAO)
-        // For simplicity, we'll try to insert directly or check via DAO
-        // Here we need a register method in DB Connection or UserDAO
-        // Let's assume DatabaseConnection has a register method or we implement it here
+        try {
+            // Check if user exists? (DB constraint will throw error if duplicate username)
+            Dao.UserDAO userDAO = new Dao.DBUserDAO();
+            User newUser = new User(username, password, fullName, phone, email, address, "CUSTOMER");
 
-        // TODO: Implement actual registration in DatabaseConnection
-        // For now returning false to prevent errors or mocking true
-        System.out.println("Register requested for: " + username);
-        return true;
+            userDAO.addUser(newUser);
+            System.out.println("AuthService: Register successful for " + username);
+            return true;
+        } catch (Exception e) {
+            System.err.println("AuthService: Register failed -> " + e.getMessage());
+            return false;
+        }
     }
 
     public void login(User user) {

@@ -54,6 +54,6 @@ public class RegisterController {
 
     @FXML
     private void handleBack() {
-        SceneManager.switchSceneStatic("/login.fxml");
+        SceneManager.switchSceneStatic("/fxml/Login.fxml");
     }
 }
