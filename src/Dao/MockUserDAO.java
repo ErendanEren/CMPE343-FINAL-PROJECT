@@ -35,4 +35,16 @@ public class MockUserDAO implements UserDAO {
         usersDB.removeIf(u -> u.getUsername().equals(username));
         System.out.println("Mock DB: Kullanıcı silindi -> " + username);
     }
+
+    @Override
+    public void updateUser(User user) {
+        for (int i = 0; i < usersDB.size(); i++) {
+            if (usersDB.get(i).getUsername().equals(user.getUsername())) {
+                usersDB.set(i, user);
+                System.out.println("Mock DB: User updated -> " + user.getUsername());
+                return;
+            }
+        }
+        System.out.println("Mock DB: User not found for update -> " + user.getUsername());
+    }
 }

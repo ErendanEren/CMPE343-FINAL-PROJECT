@@ -89,7 +89,7 @@ public class ProductManagerController implements Initializable {
                 double stock = Double.parseDouble(txtStock.getText());
                 double threshold = Double.parseDouble(txtThreshold.getText());
 
-                Product newProduct = new Product(name, type, price, stock, threshold, selectedImagePath);
+                Product newProduct = new Product(0, name, type, price, stock, threshold, selectedImagePath);
                 productDAO.addProduct(newProduct);
                 loadData();
                 clearForm();

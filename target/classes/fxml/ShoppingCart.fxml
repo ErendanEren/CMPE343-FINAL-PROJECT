@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ShoppingCartController">
+    <center>
+        <TableView fx:id="cartTable" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <columns>
+                <TableColumn fx:id="nameColumn" prefWidth="200.0" text="Product Name" />
+                <TableColumn fx:id="amountColumn" prefWidth="100.0" text="Amount (kg)" />
+                <TableColumn fx:id="priceColumn" prefWidth="120.0" text="Unit Price" />
+                <TableColumn fx:id="totalColumn" prefWidth="120.0" text="Line Total" />
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+            </columnResizePolicy>
+        </TableView>
+    </center>
+    <bottom>
+        <VBox alignment="CENTER_RIGHT" spacing="15.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label fx:id="totalPriceLabel" text="Total: 0.00 TL">
+                    <font>
+                        <Font name="System Bold" size="22.0" />
+                    </font>
+                </Label>
+                <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                    <children>
+                        <MFXButton onAction="#handleBack" style="-fx-border-color: #7f8c8d; -fx-text-fill: #7f8c8d;" text="Continue Shopping" />
+                        <MFXButton onAction="#handleRemoveItem" style="-fx-background-color: #e74c3c; -fx-text-fill: white;" text="Remove Selected" />
+                        <MFXButton onAction="#handleCheckout" style="-fx-background-color: #27ae60; -fx-text-fill: white;" text="Checkout &amp; Pay" />
+                    </children>
+                </HBox>
+            </children>
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+        </VBox>
+    </bottom>
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: #f5f5f5;" BorderPane.alignment="CENTER">
+            <children>
+                <Label text="Your Shopping Cart" textFill="#2c3e50">
+                    <font>
+                        <Font name="System Bold" size="24.0" />
+                    </font>
+                </Label>
+            </children>
+            <padding>
+                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+            </padding>
+        </HBox>
+    </top>
+</BorderPane>

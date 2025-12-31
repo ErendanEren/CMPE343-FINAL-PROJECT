@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.materialfx.controls.MFXPasswordField?>
+<?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="960.0" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ProfileController">
+    <children>
+        <Label text="My Profile" textFill="#2c3e50">
+            <font>
+                <Font name="System Bold" size="28.0" />
+            </font>
+            <VBox.margin>
+                <Insets bottom="10.0" top="20.0" />
+            </VBox.margin>
+        </Label>
+        
+        <VBox alignment="CENTER_LEFT" maxWidth="400.0" spacing="10.0">
+            <children>
+                <Label text="Full Name" />
+                <MFXTextField fx:id="nameField" floatMode="BORDER" prefWidth="400.0" />
+                
+                <Label text="Phone Number" />
+                <MFXTextField fx:id="phoneField" floatMode="BORDER" prefWidth="400.0" />
+                
+                <Label text="Email" />
+                <MFXTextField fx:id="emailField" floatMode="BORDER" prefWidth="400.0" />
+                
+                <Label text="Delivery Address" />
+                <MFXTextField fx:id="addressField" floatMode="BORDER" prefWidth="400.0" />
+                
+                <Label text="Change Password (Optional)" />
+                <MFXPasswordField fx:id="passwordField" floatMode="BORDER" prefWidth="400.0" />
+            </children>
+        </VBox>
+        
+        <MFXButton onAction="#handleSave" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #2980b9; -fx-text-fill: white;" text="Save Changes">
+         <font>
+            <Font size="14.0" />
+         </font></MFXButton>
+    </children>
+    <padding>
+        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+    </padding>
+</VBox>
