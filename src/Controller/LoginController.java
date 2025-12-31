@@ -2,13 +2,16 @@ package Controller;
 
 import Service.AuthService;
 import Models.User;
+import Utils.SceneManager;
+import io.github.palexdev.materialfx.controls.MFXPasswordField;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
 
 public class LoginController {
 
-    @FXML private TextField usernameField;
-    @FXML private PasswordField passwordField;
+    @FXML private MFXTextField usernameField;
+    @FXML private MFXPasswordField passwordField;
     @FXML private Label errorLabel;
 
     private AuthService authService;
@@ -38,17 +41,17 @@ public class LoginController {
             // Login success
             errorLabel.setText("");
             SceneManager.putData("currentUser", user);
-            
+
             // Redirect based on role
             switch (user.getRole()) {
                 case "CUSTOMER":
-                    SceneManager.switchScene("/customer.fxml");
+                    SceneManager.switchSceneStatic("/fxml/CustomerDashboard.fxml");
                     break;
                 case "CARRIER":
-                    SceneManager.switchScene("/carrier.fxml");
+                    SceneManager.switchSceneStatic("/fxml/StaffManager.fxml");
                     break;
                 case "OWNER":
-                    SceneManager.switchScene("/owner.fxml");
+                    SceneManager.switchSceneStatic("/fxml/OwnerDashboard.fxml");
                     break;
                 default:
                     errorLabel.setText("Unknown role: " + user.getRole());
@@ -60,6 +63,6 @@ public class LoginController {
 
     @FXML
     private void handleSignUp() {
-        SceneManager.switchScene("/register.fxml");
+        SceneManager.switchSceneStatic("/fxml/register.fxml");
     }
 }

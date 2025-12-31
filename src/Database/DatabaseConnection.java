@@ -50,7 +50,7 @@ public class DatabaseConnection {
     }
 
     public static User login(String username, String password) {
-        String sql = "SELECT * FROM UserInfo WHERE username = ?";
+        String sql = "SELECT * FROM user_info WHERE username = ?";
 
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
