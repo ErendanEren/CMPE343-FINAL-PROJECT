@@ -1,6 +1,6 @@
 package Controller;
 
-import Dao.MockProductDAO;
+import Dao.DBProductDAO;
 import Dao.ProductDAO;
 import Models.Product;
 import io.github.palexdev.materialfx.controls.MFXButton;
@@ -38,8 +38,8 @@ public class ProductManagerController implements Initializable {
     @FXML private MFXButton btnUpdate;
     @FXML private MFXButton btnDelete;
 
-    // Veri erişim nesnemiz (Şimdilik Mock, Eren DB atınca değişecek)
-    private ProductDAO productDAO = new MockProductDAO();
+    // Veri erişim nesnemiz (DB)
+    private ProductDAO productDAO = new DBProductDAO();
     private ObservableList<Product> productList;
     private String selectedImagePath = "";
 
@@ -89,6 +89,7 @@ public class ProductManagerController implements Initializable {
                 double stock = Double.parseDouble(txtStock.getText());
                 double threshold = Double.parseDouble(txtThreshold.getText());
 
+                // ID is 0 for new products, DB will auto-increment
                 Product newProduct = new Product(0, name, type, price, stock, threshold, selectedImagePath);
                 productDAO.addProduct(newProduct);
                 loadData();
@@ -108,6 +109,41 @@ public class ProductManagerController implements Initializable {
                 txtThreshold.setText(String.valueOf(newSelection.getThresholdKg()));
                 comboType.setValue(newSelection.getType());
                 selectedImagePath = newSelection.getImagePath();
+            }
+        });
+
+        // Güncelleme
+        btnUpdate.setOnAction(event -> {
+            Product selected = tableProducts.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                try {
+                    selected.setName(txtName.getText());
+                    selected.setType(comboType.getValue());
+                    selected.setPricePerKg(Double.parseDouble(txtPrice.getText()));
+                    selected.setStockKg(Double.parseDouble(txtStock.getText()));
+                    selected.setThresholdKg(Double.parseDouble(txtThreshold.getText()));
+                    if (!selectedImagePath.isEmpty()) {
+                        selected.setImagePath(selectedImagePath);
+                    }
+
+                    productDAO.updateProduct(selected);
+                    loadData();
+                    clearForm();
+                    System.out.println("Ürün güncellendi: " + selected.getName());
+                } catch (Exception e) {
+                    System.out.println("Güncelleme hatası: " + e.getMessage());
+                }
+            }
+        });
+
+        // Silme
+        btnDelete.setOnAction(event -> {
+            Product selected = tableProducts.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                productDAO.deleteProduct(selected.getId());
+                loadData();
+                clearForm();
+                System.out.println("Ürün silindi: " + selected.getName());
             }
         });
     }

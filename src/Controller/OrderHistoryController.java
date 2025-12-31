@@ -1,6 +1,6 @@
 package Controller;
 
-import Dao.MockOrderDao;
+import Dao.DBOrderDAO;
 import Dao.OrderDao;
 import Models.Order;
 import Models.User;
@@ -23,7 +23,7 @@ public class OrderHistoryController {
     @FXML private TableColumn<Order, String> statusColumn;
     @FXML private TableColumn<Order, String> totalColumn;
 
-    private OrderDao orderDao = MockOrderDao.getInstance();
+    private OrderDao orderDao = new DBOrderDAO();
     private OrderService orderService = new OrderService();
     private User currentUser;
 

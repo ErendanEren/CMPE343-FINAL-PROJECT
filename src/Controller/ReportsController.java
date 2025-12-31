@@ -1,6 +1,6 @@
 package Controller;
 
-import Dao.MockReportDAO;
+import Dao.DBReportDAO;
 import Dao.ReportDAO;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,7 +22,7 @@ public class ReportsController implements Initializable {
     @FXML
     private BarChart<String, Number> barChartIncome; // Çubuk grafik (Gelir)
 
-    private ReportDAO reportDAO = new MockReportDAO();
+    private ReportDAO reportDAO = new DBReportDAO();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

@@ -1,6 +1,6 @@
 package Service;
 
-import Dao.MockOrderDao;
+import Dao.DBOrderDAO;
 import Dao.OrderDao;
 import Models.*;
 
@@ -10,17 +10,15 @@ import java.util.List;
 
 public class OrderService {
 
-    private OrderDao orderDao = MockOrderDao.getInstance();
+    private OrderDao orderDao = new DBOrderDAO();
 
-    public Order placeOrder(User user, ShoppingCart cart) { // Refactored to accept User and Cart
+    public Order placeOrder(User user, ShoppingCart cart) {
         if (cart.getItems().isEmpty()) {
             throw new IllegalStateException("Cart is empty");
         }
 
         Order order = new Order();
-        order.setCustomerId(1); // TODO: Get actual ID from User object
-        // For now assuming User logic handles ID mapping or we mock it as 1
-        // In a real app we'd use user.getId() if available
+        order.setCustomerId(user.getId());
 
         order.setOrderTime(LocalDateTime.now());
         order.setStatus("PENDING");
