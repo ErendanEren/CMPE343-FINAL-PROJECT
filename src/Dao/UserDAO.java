@@ -7,4 +7,5 @@ public interface UserDAO {
     List<User> getAllCarriers(); // Sadece kuryeleri getir
     void addCarrier(User user);
     void deleteUser(String username); // ID veya Username ile silme
+    void updateUser(User user);
 }
