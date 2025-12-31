@@ -68,10 +68,11 @@ public class ShoppingCartController {
         }
 
         try {
-            // Mocking a logged-in user for now. In real app, get from Session/AuthService
+            // Mocking a loaded user
             User currentUser = new User("customer", "pass", "John Doe", "555-1234", "john@example.com", "My Home Address", "CUSTOMER");
+            currentUser.setId(1);
 
-            Order order = orderService.placeOrder(currentUser, ShoppingCart.getInstance());
+            Order order = orderService.placeOrder(currentUser, ShoppingCart.getInstance(), "Not Selected (Legacy Cart)");
 
             String invoice = orderService.generateInvoice(order);
             System.out.println(invoice); // Print invoice to console for now
