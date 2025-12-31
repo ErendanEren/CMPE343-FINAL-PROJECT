@@ -8,14 +8,15 @@ public class Group09 extends Application {
     @Override
     public void start(Stage stage) {
         try {
-            // SceneRouter logic embedded directly for standalone usage
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/login.fxml"));
-            javafx.scene.Parent root = loader.load();
-            javafx.scene.Scene scene = new javafx.scene.Scene(root, 960, 540);
-            
+            // Initialize SceneManager
+            Utils.SceneManager.getInstance().setPrimaryStage(stage);
+
+            // Load initial view
+            Utils.SceneManager.switchSceneStatic("/fxml/Login.fxml");
+
             stage.setTitle("Group09 GreenGrocer");
-            stage.setScene(scene);
-            stage.show();
+            // stage.show() is handled by SceneManager, but we insure it just in case or SceneManager might just set scene.
+            // SceneManager.switchScene calls show(), so we are good.
         } catch (Exception e) {
             e.printStackTrace();
         }

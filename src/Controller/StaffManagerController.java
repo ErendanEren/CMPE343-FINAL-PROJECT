@@ -1,6 +1,6 @@
 package Controller;
 
-import Dao.MockUserDAO;
+import Dao.DBUserDAO;
 import Dao.UserDAO;
 import Models.User;
 import io.github.palexdev.materialfx.controls.MFXButton;
@@ -34,7 +34,7 @@ public class StaffManagerController implements Initializable {
     @FXML private MFXButton btnHire;
     @FXML private MFXButton btnFire;
 
-    private UserDAO userDAO = new MockUserDAO();
+    private UserDAO userDAO = new DBUserDAO();
     private ObservableList<User> carrierList;
 
     @Override

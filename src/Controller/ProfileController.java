@@ -1,6 +1,6 @@
 package Controller;
 
-import Dao.MockUserDAO;
+import Dao.DBUserDAO;
 import Dao.UserDAO;
 import Models.User;
 import Service.AuthService;
@@ -18,7 +18,7 @@ public class ProfileController {
     @FXML private MFXTextField addressField;
     @FXML private MFXPasswordField passwordField;
 
-    private UserDAO userDAO = new MockUserDAO();
+    private UserDAO userDAO = new DBUserDAO();
     private User currentUser;
 
     @FXML

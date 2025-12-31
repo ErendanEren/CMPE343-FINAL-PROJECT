@@ -45,13 +45,13 @@ public class LoginController {
             // Redirect based on role
             switch (user.getRole()) {
                 case "CUSTOMER":
-                    SceneManager.switchSceneStatic("/customer.fxml");
+                    SceneManager.switchSceneStatic("/fxml/CustomerDashboard.fxml");
                     break;
                 case "CARRIER":
-                    SceneManager.switchSceneStatic("/carrier.fxml");
+                    SceneManager.switchSceneStatic("/fxml/StaffManager.fxml");
                     break;
                 case "OWNER":
-                    SceneManager.switchSceneStatic("/owner.fxml");
+                    SceneManager.switchSceneStatic("/fxml/OwnerDashboard.fxml");
                     break;
                 default:
                     errorLabel.setText("Unknown role: " + user.getRole());
@@ -63,6 +63,6 @@ public class LoginController {
 
     @FXML
     private void handleSignUp() {
-        SceneManager.switchSceneStatic("/register.fxml");
+        SceneManager.switchSceneStatic("/fxml/register.fxml");
     }
 }

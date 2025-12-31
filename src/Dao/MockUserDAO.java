@@ -24,6 +24,12 @@ public class MockUserDAO implements UserDAO {
     }
 
     @Override
+    public void addUser(User user) {
+        usersDB.add(user);
+        System.out.println("Mock DB: Kullanıcı eklendi -> " + user.getUsername());
+    }
+
+    @Override
     public void addCarrier(User user) {
         user.setRole("CARRIER"); // Rölü garantiye alalım
         usersDB.add(user);
