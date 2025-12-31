@@ -12,6 +12,8 @@
 <?import javafx.scene.text.Font?>
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.ComboBox?>
 
 <BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.CartViewController">
     <center>
@@ -37,6 +39,16 @@
                     </children>
                 </HBox>
                 <Label fx:id="lblCouponMessage" />
+
+                <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                    <children>
+                        <Label text="Delivery Date:" />
+                        <DatePicker fx:id="datePickerDelivery" prefWidth="120.0" />
+                        <Label text="Time:" />
+                        <ComboBox fx:id="comboDeliveryTime" prefWidth="120.0" />
+                    </children>
+                </HBox>
+
                 <Label fx:id="totalPriceLabel" text="Total: 0.00 TL">
                     <font>
                         <Font name="System Bold" size="18.0" />
