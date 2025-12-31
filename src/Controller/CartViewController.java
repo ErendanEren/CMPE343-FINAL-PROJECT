@@ -37,7 +37,11 @@ public class CartViewController {
     @FXML private MFXButton btnApplyCoupon;
     @FXML private Label lblCouponMessage;
 
+    @FXML private javafx.scene.control.DatePicker datePickerDelivery;
+    @FXML private javafx.scene.control.ComboBox<String> comboDeliveryTime;
+
     private OrderService orderService = new OrderService();
+    private static final double MIN_CART_VALUE = 50.0;
 
     @FXML
     public void initialize() {
@@ -59,6 +63,15 @@ public class CartViewController {
 
         // Update total price label initially
         updateTotalLabel();
+
+        // Populate Delivery Time Slots
+        comboDeliveryTime.getItems().addAll(
+                "09:00 - 11:00",
+                "11:00 - 13:00",
+                "13:00 - 15:00",
+                "15:00 - 17:00",
+                "17:00 - 19:00"
+        );
     }
 
     /**
@@ -117,9 +130,33 @@ public class CartViewController {
             return;
         }
 
+        // 1. Min Cart Value Check
+        if (ShoppingCart.getInstance().calculateTotal() < MIN_CART_VALUE) {
+            showAlert("Minimum Order", "Minimum cart value must be " + MIN_CART_VALUE + " TL.");
+            return;
+        }
+
+        // 2. Delivery Time Validation
+        if (datePickerDelivery.getValue() == null || comboDeliveryTime.getValue() == null) {
+            showAlert("Delivery Info Missing", "Please select a delivery date and time slot.");
+            return;
+        }
+
+        // Combine date and time (simplified for now as String or LocalDateTime parsing)
+        String deliveryInfo = datePickerDelivery.getValue().toString() + " " + comboDeliveryTime.getValue();
+
         try {
-            Order order = orderService.placeOrder(user, ShoppingCart.getInstance());
-            showAlert("Order Successful", "Your order has been placed!\nOrder ID: " + order.getId());
+            // Pass delivery info to placeOrder (Requires updating OrderService signature)
+            // For now, setting it via a transient method or updating the service first?
+            // I'll update the Service call here assuming I'll update Service next.
+            // Actually, let's keep the call signature same if I can't change it atomically,
+            // OR change OrderService signature first.
+            // Let's pass it as a separate argument.
+
+            Order order = orderService.placeOrder(user, ShoppingCart.getInstance(), deliveryInfo);
+
+            showAlert("Order Successful", "Your order has been placed!\nOrder ID: " + order.getId() + "\nInvoice generated.");
+
             // Close cart or refresh UI
             cartTable.refresh();
             updateTotalLabel();
