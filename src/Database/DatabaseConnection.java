@@ -21,13 +21,19 @@ public class DatabaseConnection {
 
     private static Connection connection;
 
-    public static Connection getConnection() throws SQLException {
+    public static synchronized Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
-            connection = DriverManager.getConnection(
-                    CONNECTION_STRING,
-                    DATABASE_USER,
-                    DATABASE_PASSWORD
-            );
+            try {
+                // Driver'ı manuel yüklemek bazı sürümlerde hatayı önler
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                connection = DriverManager.getConnection(
+                        CONNECTION_STRING,
+                        DATABASE_USER,
+                        DATABASE_PASSWORD
+                );
+            } catch (ClassNotFoundException e) {
+                throw new SQLException("MySQL Driver not found", e);
+            }
         }
         return connection;
     }
