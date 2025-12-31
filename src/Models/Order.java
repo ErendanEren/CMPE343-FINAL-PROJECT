@@ -7,27 +7,28 @@ import java.util.List;
 public class Order {
     private int id;
     private int customerId;
-    private int carrierId;
+    private Integer carrierId; // Nullable olması için Integer yaptık
     private LocalDateTime orderTime;
     private LocalDateTime requestedDeliveryTime;
     private LocalDateTime deliveredAt;
     private String status;
     private double totalAmount;
     private String customerAddressSnapshot;
-    
-    // Transient list for processing
+
+    // Siparişin içindeki ürünleri tutan liste
     private List<OrderItem> items = new ArrayList<>();
 
     public Order() {}
 
+    // Getter ve Setterlar
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
     public int getCustomerId() { return customerId; }
     public void setCustomerId(int customerId) { this.customerId = customerId; }
 
-    public int getCarrierId() { return carrierId; }
-    public void setCarrierId(int carrierId) { this.carrierId = carrierId; }
+    public Integer getCarrierId() { return carrierId; }
+    public void setCarrierId(Integer carrierId) { this.carrierId = carrierId; }
 
     public LocalDateTime getOrderTime() { return orderTime; }
     public void setOrderTime(LocalDateTime orderTime) { this.orderTime = orderTime; }
