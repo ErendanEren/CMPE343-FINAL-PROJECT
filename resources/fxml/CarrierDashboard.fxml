@@ -20,13 +20,13 @@
 
     <TabPane fx:id="carrierTabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
 
-        <Tab fx:id="availableTable" text="Available Orders">
+        <Tab text="Available Orders">
             <VBox spacing="10">
                 <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
                 <TableView fx:id="availableTable" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn fx:id="colId" prefWidth="80" text="Order ID" />
-                        <TableColumn fx:id="colAddress" prefWidth="500" text="Customer Address" />
+                        <TableColumn fx:id="colAddress" prefWidth="550" text="Customer Address" />
                         <TableColumn fx:id="colAmount" prefWidth="150" text="Total (VAT Inc.)" />
                     </columns>
                 </TableView>
@@ -40,7 +40,7 @@
                 <TableView fx:id="activeTable" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn fx:id="colActiveId" prefWidth="80" text="Order ID" />
-                        <TableColumn fx:id="colActiveAddress" prefWidth="650" text="Delivery Address" />
+                        <TableColumn fx:id="colActiveAddress" prefWidth="750" text="Delivery Address" />
                     </columns>
                 </TableView>
                 <HBox spacing="10">
@@ -56,12 +56,14 @@
                 <TableView fx:id="completedTable" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn fx:id="colCompId" prefWidth="80" text="Order ID" />
-                        <TableColumn fx:id="colCompAddress" prefWidth="500" text="Address" />
-                        <TableColumn fx:id="colCompAmount" prefWidth="150" text="Total Paid" />
+                        <TableColumn fx:id="colCompAddress" prefWidth="430" text="Address" />
+                        <TableColumn fx:id="colCompAmount" prefWidth="120" text="Total Paid" />
+                        <TableColumn fx:id="colCompDeliveredAt" prefWidth="200" text="Delivery Date" />
                     </columns>
                 </TableView>
             </VBox>
         </Tab>
+
         <Tab closable="false" text="My Ratings">
             <VBox spacing="10">
                 <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
