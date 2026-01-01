@@ -1,8 +1,12 @@
 package Models;
 
+import java.io.ByteArrayInputStream;
+import javafx.scene.image.Image;
+
 /**
  * Represents a product (Vegetable or Fruit) in the inventory.
  * Contains business logic for dynamic pricing based on stock thresholds.
+ * Handles both file paths (for testing) and BLOB data (from DB).
  *
  * @author Zafer Mert Serinken
  */
@@ -13,11 +17,32 @@ public class Product {
     private double pricePerKg;
     private double stockKg;
     private double thresholdKg;
+
     private String imagePath;
+    
+    private byte[] imageContent;
+
     private boolean isActive;
 
     public Product() {}
 
+    /**
+     * Constructor including BLOB image data (For Database operations)
+     */
+    public Product(int id, String name, String type, double pricePerKg, double stockKg, double thresholdKg, byte[] imageContent) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.pricePerKg = pricePerKg;
+        this.stockKg = stockKg;
+        this.thresholdKg = thresholdKg;
+        this.imageContent = imageContent;
+        this.isActive = true;
+    }
+
+    /**
+     * Overloaded Constructor for Dummy Data (Uses image path)
+     */
     public Product(int id, String name, String type, double pricePerKg, double stockKg, double thresholdKg, String imagePath) {
         this.id = id;
         this.name = name;
@@ -31,12 +56,7 @@ public class Product {
 
     /**
      * Calculates the current price of the product based on the stock level.
-     * <p>
-     * Implements the "Greedy Owner" rule: If the current stock is less than or equal to
-     * the threshold, the price is doubled.
-     * </p>
-     *
-     * @return The effective selling price per kg.
+     * Implements the "Greedy Owner" rule[cite: 41].
      */
     public double getEffectivePrice() {
         if (stockKg <= thresholdKg && stockKg > 0) {
@@ -44,6 +64,26 @@ public class Product {
         }
         return pricePerKg;
     }
+
+
+    /**
+     * Converts the stored BLOB (byte[]) to a JavaFX Image object.
+     * Useful for ProductCardController.
+     */
+    public Image getJavaFXImage() {
+        if (imageContent != null && imageContent.length > 0) {
+            return new Image(new ByteArrayInputStream(imageContent));
+        } else if (imagePath != null && !imagePath.isEmpty()) {
+            try {
+                return new Image(getClass().getResourceAsStream("/Images/" + imagePath));
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    // --- Getters and Setters ---
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -62,6 +102,9 @@ public class Product {
 
     public double getThresholdKg() { return thresholdKg; }
     public void setThresholdKg(double thresholdKg) { this.thresholdKg = thresholdKg; }
+
+    public byte[] getImageContent() { return imageContent; }
+    public void setImageContent(byte[] imageContent) { this.imageContent = imageContent; }
 
     public String getImagePath() { return imagePath; }
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }

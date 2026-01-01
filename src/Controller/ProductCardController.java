@@ -63,17 +63,8 @@ public class ProductCardController {
             productPrice.setTextFill(Color.BLACK);
         }
 
-        // Load Image (Handles local resources or potential DB streams)
-        try {
-            // For now, loading from resources folder (e.g., /Images/tomato.jpg)
-            // In the future, this will handle BLOBs from DB.
-            String path = "/Images/" + product.getImagePath();
-            InputStream is = getClass().getResourceAsStream(path);
-            if (is != null) {
-                productImage.setImage(new Image(is));
-            }
-        } catch (Exception e) {
-            System.err.println("Could not load image for " + product.getName());
+        if (product.getJavaFXImage() != null) {
+            productImage.setImage(product.getJavaFXImage());
         }
     }
 
