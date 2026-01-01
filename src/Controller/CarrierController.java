@@ -11,33 +11,33 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Kurye panelindeki tüm kullanıcı etkileşimlerini yöneten Controller sınıfı.
- * Member 4 sorumlulukları olan sipariş takibi, mesajlaşma ve puanlama sistemini yönetir[cite: 49, 50].
- */
+
 public class CarrierController {
 
-    // 1. SEKME: Available Orders (Boştaki Siparişler) [cite: 52, 121]
+
     @FXML private TableView<Order> availableTable;
     @FXML private TableColumn<Order, Integer> colId;
     @FXML private TableColumn<Order, String> colAddress;
     @FXML private TableColumn<Order, Double> colAmount;
 
-    // 2. SEKME: Active Orders (Kuryenin Üzerindeki Siparişler) [cite: 52, 121]
+    // 2. SEKME: Active Orders (Kuryenin Üzerindeki Siparişler)
     @FXML private TableView<Order> activeTable;
     @FXML private TableColumn<Order, Integer> colActiveId;
     @FXML private TableColumn<Order, String> colActiveAddress;
 
-    // 3. SEKME: Completed Orders (Tamamlananlar) [cite: 52, 121]
+    // 3. SEKME: Completed Orders (Tamamlananlar)
     @FXML private TableView<Order> completedTable;
     @FXML private TableColumn<Order, Integer> colCompId;
     @FXML private TableColumn<Order, String> colCompAddress;
     @FXML private TableColumn<Order, Double> colCompAmount;
+    // Yeni eklenen gerçek teslimat tarihi sütunu
+    @FXML private TableColumn<Order, LocalDateTime> colCompDeliveredAt;
 
-    // 4. SEKME: Puanlar ve Performans [cite: 60, 130]
+    // 4. SEKME: Puanlar ve Performans
     @FXML private ListView<String> ratingListView;
     @FXML private Label lblAverageRating;
 
@@ -47,47 +47,44 @@ public class CarrierController {
 
     /**
      * Ekran yüklendiğinde otomatik çalışan metot.
-     * Kullanıcı verilerini alır ve tablo sütunlarını eşleştirir[cite: 95, 101].
      */
     @FXML
     public void initialize() {
-        // SceneManager üzerinden giriş yapan kurye bilgisini alıyoruz [cite: 95]
         this.currentUser = (User) SceneManager.getData("currentUser");
 
-        // Tablo Sütun Yapılandırması
         setupTableColumns();
-
-        // Başlangıç Verilerini Yükleme
         refreshTables();
         loadRatings();
     }
 
     private void setupTableColumns() {
+        // Available Table
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colAddress.setCellValueFactory(new PropertyValueFactory<>("customerAddressSnapshot"));
         colAmount.setCellValueFactory(new PropertyValueFactory<>("totalAmount"));
 
+        // Active Table
         colActiveId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colActiveAddress.setCellValueFactory(new PropertyValueFactory<>("customerAddressSnapshot"));
 
+        // Completed Table
         colCompId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colCompAddress.setCellValueFactory(new PropertyValueFactory<>("customerAddressSnapshot"));
         colCompAmount.setCellValueFactory(new PropertyValueFactory<>("totalAmount"));
+        // delivered_at verisini Order modelindeki deliveredAt alanı ile eşleştiriyoruz
+        colCompDeliveredAt.setCellValueFactory(new PropertyValueFactory<>("deliveredAt"));
     }
 
     /**
-     * Veritabanındaki güncel siparişleri uygun sekmelere dağıtır[cite: 121, 150].
+     * Veritabanındaki güncel siparişleri uygun sekmelere dağıtır.
      */
     private void refreshTables() {
-        // Boştaki siparişleri listeler (Available) [cite: 122]
         availableTable.setItems(FXCollections.observableArrayList(carrierDAO.getAvailableOrders()));
 
         if (currentUser != null) {
-            // Kuryenin üzerine aldığı siparişler (Active) [cite: 121, 123]
             activeTable.setItems(FXCollections.observableArrayList(
                     carrierDAO.getOrdersByCarrier(currentUser.getId(), "ASSIGNED")
             ));
-            // Kuryenin tamamladığı teslimatlar (Completed) [cite: 121]
             completedTable.setItems(FXCollections.observableArrayList(
                     carrierDAO.getOrdersByCarrier(currentUser.getId(), "DELIVERED")
             ));
@@ -96,7 +93,6 @@ public class CarrierController {
 
     /**
      * Bir siparişi kuryenin üzerine zimmetler.
-     * Hata Yönetimi: Sipariş başka bir kurye tarafından az önce alındıysa uyarı verir.
      */
     @FXML
     private void handlePickUp() {
@@ -107,7 +103,6 @@ public class CarrierController {
                 refreshTables();
                 showAlert("Success", "Order successfully assigned to you.");
             } else {
-                // Kritik mantıksal hata kontrolü: Sipariş artık boşta değil [cite: 158]
                 refreshTables();
                 showAlert("Conflict Error", "This order was just picked up by another carrier!");
             }
@@ -117,12 +112,13 @@ public class CarrierController {
     }
 
     /**
-     * Siparişi teslim edildi olarak işaretler ve veritabanını günceller[cite: 58, 123].
+     * Siparişi teslim edildi olarak işaretler ve delivered_at zamanını kaydeder.
      */
     @FXML
     private void handleDeliver() {
         Order selected = activeTable.getSelectionModel().getSelectedItem();
         if (selected != null && currentUser != null) {
+            // DAO içindeki completeOrder artık veritabanındaki delivered_at sütununu güncelliyor
             boolean success = carrierDAO.completeOrder(selected.getId());
             if (success) {
                 refreshTables();
@@ -134,7 +130,7 @@ public class CarrierController {
     }
 
     /**
-     * Müşteriye anlık mesaj gönderir[cite: 53, 120].
+     * Müşteriye anlık mesaj gönderir.
      */
     @FXML
     private void handleSendMessage() {
@@ -168,7 +164,7 @@ public class CarrierController {
     }
 
     /**
-     * Kuryenin performans verilerini ve müşteri değerlendirmelerini yükler[cite: 60, 130].
+     * Kuryenin performans verilerini ve müşteri değerlendirmelerini yükler.
      */
     private void loadRatings() {
         if (currentUser != null && ratingListView != null) {
