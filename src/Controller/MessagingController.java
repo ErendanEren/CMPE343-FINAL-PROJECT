@@ -10,8 +10,11 @@ import javafx.scene.control.*;
 import java.util.List;
 
 /**
- * Ortak mesajlaşma sistemini yöneten sınıf.
- * Member 4 sorumluluğu: Sistem Mesajlaşması altyapısı.
+ * Controller class for managing the shared messaging system.
+ * This module fulfills Member 4's responsibility for the System Messaging infrastructure.
+ * Enables communication between different user roles within the application.
+ *
+ * @author Zafer Mert Serinken
  */
 public class MessagingController {
 
@@ -21,23 +24,32 @@ public class MessagingController {
 
     private MessageDao messageDao = new MessageDao();
     private User currentUser;
-    private int targetUserId; // Mesajlaşılan kişinin ID'si
+    private int targetUserId;
 
+    /**
+     * Initializes the controller.
+     * Retrieves the authenticated user from the system session and
+     * fetches the target recipient's information passed from other modules.
+     */
     @FXML
     public void initialize() {
-        // Altyapı: Giriş yapan kullanıcıyı sistemden çek [cite: 95]
+        // Retrieve current authenticated user from session data
         this.currentUser = (User) SceneManager.getData("currentUser");
 
-        // Diğer modüllerden (Kurye/Müşteri) gelen hedef kullanıcı bilgisini al
+        // Retrieve target user information passed from Carrier or Customer modules
         Object target = SceneManager.getData("targetUserId");
         if (target != null) {
             this.targetUserId = (int) target;
-            lblContactName.setText("Sohbet Edilen ID: " + targetUserId);
+            lblContactName.setText("Chatting with ID: " + targetUserId);
         }
 
         handleRefresh();
     }
 
+    /**
+     * Handles the message transmission process.
+     * Validates input content and persists the message to the database via MessageDao.
+     */
     @FXML
     private void handleSend() {
         String content = txtMessageInput.getText().trim();
@@ -48,24 +60,29 @@ public class MessagingController {
         msg.setReceiverId(this.targetUserId);
         msg.setContent(content);
 
-        // Altyapı: Mesajı veritabanına kaydet [cite: 63]
+        // Persist the message record to the database
         if (messageDao.sendMessage(msg)) {
             txtMessageInput.clear();
             handleRefresh();
         }
     }
 
+    /**
+     * Synchronizes the UI message list with the latest database records.
+     * Fetches messages in chronological order and applies visual labels
+     * based on the sender's identity.
+     */
     @FXML
     private void handleRefresh() {
         if (currentUser == null) return;
 
-        // Veritabanındaki mesajları kronolojik olarak çek
+        // Fetch chronological messages for the current user from the database
         List<Message> messages = messageDao.getMessagesForUser(currentUser.getId());
         messageListView.getItems().clear();
 
         for (Message m : messages) {
-            // Mesajın yönüne göre görsel etiket ekle
-            String senderLabel = (m.getSenderId() == currentUser.getId()) ? "[SİZ]: " : "[GELEN]: ";
+            // Apply visual labels based on the message direction
+            String senderLabel = (m.getSenderId() == currentUser.getId()) ? "[YOU]: " : "[INCOMING]: ";
             messageListView.getItems().add(senderLabel + m.getContent());
         }
     }

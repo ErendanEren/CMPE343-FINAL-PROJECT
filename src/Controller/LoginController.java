@@ -8,6 +8,12 @@ import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
+/**
+ * Controller class for the Login interface.
+ * Handles user authentication processes and manages role-based redirection
+ * to specific dashboards (Customer, Carrier, or Owner).
+ * * @author Zafer Mert Serinken
+ */
 public class LoginController {
 
     @FXML private MFXTextField usernameField;
@@ -16,33 +22,48 @@ public class LoginController {
 
     private AuthService authService;
 
+    /**
+     * Constructs a new LoginController.
+     * Initializes the connection to the AuthService singleton.
+     */
     public LoginController() {
         this.authService = AuthService.getInstance();
     }
 
+    /**
+     * Automatically called after the FXML file has been loaded.
+     * Can be used for additional UI setup logic.
+     */
     @FXML
     public void initialize() {
-        // Init logic if needed
+        // Initialization logic can be added here if needed
     }
 
+    /**
+     * Handles the login action.
+     * Validates input fields, authenticates credentials via AuthService,
+     * and redirects the user to the appropriate dashboard based on their role.
+     */
     @FXML
     private void handleLogin() {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
+        // Validate that fields are not empty
         if (username.isEmpty() || password.isEmpty()) {
             errorLabel.setText("Please enter username and password.");
             return;
         }
 
+        // Attempt authentication
         User user = authService.login(username, password);
 
         if (user != null) {
-            // Login success
+            // Success: clear errors and store session data
             errorLabel.setText("");
             SceneManager.putData("currentUser", user);
 
-            // Redirect based on role
+            // Navigate to the correct interface based on user role
             switch (user.getRole()) {
                 case "CUSTOMER":
                     SceneManager.switchSceneStatic("/fxml/CustomerDashboard.fxml");
@@ -57,10 +78,14 @@ public class LoginController {
                     errorLabel.setText("Unknown role: " + user.getRole());
             }
         } else {
+            // Failure: display error message
             errorLabel.setText("Invalid username or password.");
         }
     }
 
+    /**
+     * Navigates the user to the registration (Sign Up) screen.
+     */
     @FXML
     private void handleSignUp() {
         SceneManager.switchSceneStatic("/fxml/register.fxml");

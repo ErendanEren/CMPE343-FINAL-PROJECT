@@ -16,29 +16,29 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-
+/**
+ * Controller class for the Carrier Module.
+ * Manages order fulfillment workflow, real-time order tracking,
+ * performance analytics, and communication with customers.
+ * * @author Zafer Mert Serinken
+ */
 public class CarrierController {
-
 
     @FXML private TableView<Order> availableTable;
     @FXML private TableColumn<Order, Integer> colId;
     @FXML private TableColumn<Order, String> colAddress;
     @FXML private TableColumn<Order, Double> colAmount;
 
-    // 2. SEKME: Active Orders (Kuryenin Üzerindeki Siparişler)
     @FXML private TableView<Order> activeTable;
     @FXML private TableColumn<Order, Integer> colActiveId;
     @FXML private TableColumn<Order, String> colActiveAddress;
 
-    // 3. SEKME: Completed Orders (Tamamlananlar)
     @FXML private TableView<Order> completedTable;
     @FXML private TableColumn<Order, Integer> colCompId;
     @FXML private TableColumn<Order, String> colCompAddress;
     @FXML private TableColumn<Order, Double> colCompAmount;
-    // Yeni eklenen gerçek teslimat tarihi sütunu
     @FXML private TableColumn<Order, LocalDateTime> colCompDeliveredAt;
 
-    // 4. SEKME: Puanlar ve Performans
     @FXML private ListView<String> ratingListView;
     @FXML private Label lblAverageRating;
 
@@ -47,7 +47,8 @@ public class CarrierController {
     private User currentUser;
 
     /**
-     * Ekran yüklendiğinde otomatik çalışan metot.
+     * Initializes the controller. Sets up table columns, loads initial data,
+     * and starts a background timeline to refresh order tables every 3 seconds.
      */
     @FXML
     public void initialize() {
@@ -57,7 +58,6 @@ public class CarrierController {
         refreshTables();
         loadRatings();
 
-        // 3 saniyede bir tabloyu otomatik yenile (Anlık Takip)
         javafx.animation.Timeline timeline = new javafx.animation.Timeline(
                 new javafx.animation.KeyFrame(javafx.util.Duration.seconds(3), event -> {
                     refreshTables();
@@ -67,26 +67,30 @@ public class CarrierController {
         timeline.play();
     }
 
+    /**
+     * Configures the cell value factories for all TableViews.
+     * Maps Order model properties to their respective UI columns.
+     */
     private void setupTableColumns() {
-        // Available Table
+        // Available Table Mapping
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colAddress.setCellValueFactory(new PropertyValueFactory<>("customerAddressSnapshot"));
         colAmount.setCellValueFactory(new PropertyValueFactory<>("totalAmount"));
 
-        // Active Table
+        // Active Table Mapping
         colActiveId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colActiveAddress.setCellValueFactory(new PropertyValueFactory<>("customerAddressSnapshot"));
 
-        // Completed Table
+        // Completed Table Mapping
         colCompId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colCompAddress.setCellValueFactory(new PropertyValueFactory<>("customerAddressSnapshot"));
         colCompAmount.setCellValueFactory(new PropertyValueFactory<>("totalAmount"));
-        // delivered_at verisini Order modelindeki deliveredAt alanı ile eşleştiriyoruz
         colCompDeliveredAt.setCellValueFactory(new PropertyValueFactory<>("deliveredAt"));
     }
 
     /**
-     * Veritabanındaki güncel siparişleri uygun sekmelere dağıtır.
+     * Synchronizes the UI tables with the database.
+     * Distributes orders into Available, Active (Assigned), and Completed (Delivered) categories.
      */
     private void refreshTables() {
         availableTable.setItems(FXCollections.observableArrayList(carrierDAO.getAvailableOrders()));
@@ -102,7 +106,8 @@ public class CarrierController {
     }
 
     /**
-     * Bir siparişi kuryenin üzerine zimmetler.
+     * Event handler for picking up an available order.
+     * Attempts to assign the selected order to the current carrier in the database.
      */
     @FXML
     private void handlePickUp() {
@@ -122,13 +127,13 @@ public class CarrierController {
     }
 
     /**
-     * Siparişi teslim edildi olarak işaretler ve delivered_at zamanını kaydeder.
+     * Event handler for marking an order as delivered.
+     * Updates the order status and records the delivery timestamp in the database.
      */
     @FXML
     private void handleDeliver() {
         Order selected = activeTable.getSelectionModel().getSelectedItem();
         if (selected != null && currentUser != null) {
-            // DAO içindeki completeOrder artık veritabanındaki delivered_at sütununu güncelliyor
             boolean success = carrierDAO.completeOrder(selected.getId());
             if (success) {
                 refreshTables();
@@ -140,7 +145,8 @@ public class CarrierController {
     }
 
     /**
-     * Müşteriye anlık mesaj gönderir.
+     * Event handler for sending a message to the customer of a selected active order.
+     * Opens a text input dialog to capture and send the message content.
      */
     @FXML
     private void handleSendMessage() {
@@ -174,7 +180,8 @@ public class CarrierController {
     }
 
     /**
-     * Kuryenin performans verilerini ve müşteri değerlendirmelerini yükler.
+     * Loads performance metrics and customer reviews for the current carrier.
+     * Calculates the average rating and updates the visual performance label.
      */
     private void loadRatings() {
         if (currentUser != null && ratingListView != null) {
@@ -194,6 +201,11 @@ public class CarrierController {
         }
     }
 
+    /**
+     * Utility method to display information alerts to the user.
+     * * @param title The title of the alert window.
+     * @param content The message to be displayed.
+     */
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -201,6 +213,11 @@ public class CarrierController {
         alert.setContentText(content);
         alert.showAndWait();
     }
+
+    /**
+     * Handles the user logout process.
+     * Clears the current session and redirects the user to the Login screen.
+     */
     @FXML
     private void handleLogout() {
         AuthService.getInstance().logout();

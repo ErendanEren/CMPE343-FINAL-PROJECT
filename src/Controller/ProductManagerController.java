@@ -19,6 +19,12 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Controller class for the Product Management interface.
+ * Fulfills Member 3's responsibility for the Owner Module (Admin).
+ * Manages CRUD operations for products, including image handling as BLOBs.
+ * * @author Zafer Mert Serinken
+ */
 public class ProductManagerController implements Initializable {
 
     @FXML private TableView<Product> tableProducts;
@@ -38,23 +44,29 @@ public class ProductManagerController implements Initializable {
     @FXML private MFXButton btnUpdate;
     @FXML private MFXButton btnDelete;
 
-    // Veri erişim nesnemiz (DB)
     private ProductDAO productDAO = new DBProductDAO();
     private ObservableList<Product> productList;
     private String selectedImagePath = "";
 
+    /**
+     * Initializes the controller class.
+     * Sets up the product table, loads data from the database, and configures event handlers.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setupTable();
         loadData();
         setupActions();
 
-        // ComboBox doldur
+        // Populate the type selection ComboBox
         comboType.setItems(FXCollections.observableArrayList("FRUIT", "VEGETABLE"));
     }
 
+    /**
+     * Configures the TableView columns.
+     * Maps properties to their respective Product model getter names.
+     */
     private void setupTable() {
-        // Product.java içindeki getter isimleriyle eşleşmeli
         colName.setCellValueFactory(new PropertyValueFactory<>("name"));
         colType.setCellValueFactory(new PropertyValueFactory<>("type"));
         colPrice.setCellValueFactory(new PropertyValueFactory<>("pricePerKg"));
@@ -62,6 +74,9 @@ public class ProductManagerController implements Initializable {
         colThreshold.setCellValueFactory(new PropertyValueFactory<>("thresholdKg"));
     }
 
+    /**
+     * Synchronizes the TableView with product records retrieved from the database.
+     */
     private void loadData() {
         System.out.println("ProductManagerController: Loading data...");
         productList = FXCollections.observableArrayList(productDAO.getAllProducts());
@@ -69,21 +84,24 @@ public class ProductManagerController implements Initializable {
         tableProducts.setItems(productList);
     }
 
+    /**
+     * Defines event handlers for UI actions including image selection,
+     * adding, updating, and deleting products.
+     */
     private void setupActions() {
-        // Resim Seçme
+        // Image Selection Logic
         btnChooseImage.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Ürün Resmi Seç");
+            fileChooser.setTitle("Select Product Image");
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
             File selectedFile = fileChooser.showOpenDialog(null);
             if (selectedFile != null) {
                 selectedImagePath = selectedFile.getAbsolutePath();
-                btnChooseImage.setText("Seçildi: " + selectedFile.getName());
+                btnChooseImage.setText("Selected: " + selectedFile.getName());
             }
         });
 
-        // Ekleme
-        // Ekleme
+        // Add Product Logic
         btnAdd.setOnAction(event -> {
             try {
                 String name = txtName.getText();
@@ -94,30 +112,32 @@ public class ProductManagerController implements Initializable {
 
                 byte[] imageBytes = null;
                 String mimeType = null;
+
                 if (!selectedImagePath.isEmpty()) {
                     File imgFile = new File(selectedImagePath);
                     imageBytes = java.nio.file.Files.readAllBytes(imgFile.toPath());
                     mimeType = java.nio.file.Files.probeContentType(imgFile.toPath());
-                    // Fallback if probe fails
+
+                    // Fallback MIME type identification if probe fails
                     if(mimeType == null) {
                         if(selectedImagePath.endsWith(".png")) mimeType = "image/png";
                         else if(selectedImagePath.endsWith(".jpg") || selectedImagePath.endsWith(".jpeg")) mimeType = "image/jpeg";
                     }
                 }
 
-                // ID is 0 for new products, DB will auto-increment
+                // ID set to 0 as database handles auto-increment
                 Product newProduct = new Product(0, name, type, price, stock, threshold, imageBytes, mimeType);
                 productDAO.addProduct(newProduct);
                 loadData();
                 clearForm();
 
             } catch (Exception e) {
-                System.out.println("Hata: " + e.getMessage());
+                System.out.println("Error: " + e.getMessage());
                 e.printStackTrace();
             }
         });
 
-        // Tablodan seçim
+        // Selection listener to populate fields for editing
         tableProducts.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
                 txtName.setText(newSelection.getName());
@@ -125,11 +145,11 @@ public class ProductManagerController implements Initializable {
                 txtStock.setText(String.valueOf(newSelection.getStockKg()));
                 txtThreshold.setText(String.valueOf(newSelection.getThresholdKg()));
                 comboType.setValue(newSelection.getType());
-                selectedImagePath = ""; // Reset path on selection, unless re-selected
+                selectedImagePath = "";
             }
         });
 
-        // Güncelleme
+        // Update Product Logic
         btnUpdate.setOnAction(event -> {
             Product selected = tableProducts.getSelectionModel().getSelectedItem();
             if (selected != null) {
@@ -144,6 +164,7 @@ public class ProductManagerController implements Initializable {
                         File imgFile = new File(selectedImagePath);
                         byte[] imageBytes = java.nio.file.Files.readAllBytes(imgFile.toPath());
                         String mimeType = java.nio.file.Files.probeContentType(imgFile.toPath());
+
                         if(mimeType == null) {
                             if(selectedImagePath.endsWith(".png")) mimeType = "image/png";
                             else if(selectedImagePath.endsWith(".jpg") || selectedImagePath.endsWith(".jpeg")) mimeType = "image/jpeg";
@@ -151,32 +172,35 @@ public class ProductManagerController implements Initializable {
 
                         selected.setImageContent(imageBytes);
                         selected.setMimeType(mimeType);
-                        selected.setImagePath(null); // Clear path as we use blob
+                        selected.setImagePath(null);
                     }
 
                     productDAO.updateProduct(selected);
                     loadData();
                     clearForm();
-                    System.out.println("Ürün güncellendi: " + selected.getName());
+                    System.out.println("Product updated: " + selected.getName());
                 } catch (Exception e) {
-                    System.out.println("Güncelleme hatası: " + e.getMessage());
+                    System.out.println("Update error: " + e.getMessage());
                     e.printStackTrace();
                 }
             }
         });
 
-        // Silme
+        // Delete Product Logic
         btnDelete.setOnAction(event -> {
             Product selected = tableProducts.getSelectionModel().getSelectedItem();
             if (selected != null) {
                 productDAO.deleteProduct(selected.getId());
                 loadData();
                 clearForm();
-                System.out.println("Ürün silindi: " + selected.getName());
+                System.out.println("Product deleted: " + selected.getName());
             }
         });
     }
 
+    /**
+     * Clears all input fields in the product form and resets selection state.
+     */
     private void clearForm() {
         txtName.clear();
         txtPrice.clear();
@@ -184,6 +208,6 @@ public class ProductManagerController implements Initializable {
         txtThreshold.clear();
         comboType.clearSelection();
         selectedImagePath = "";
-        btnChooseImage.setText("Resim Seç");
+        btnChooseImage.setText("Choose Image");
     }
 }

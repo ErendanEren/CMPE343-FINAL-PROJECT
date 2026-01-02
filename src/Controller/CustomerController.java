@@ -22,41 +22,42 @@ import java.util.stream.Collectors;
 
 /**
  * Controls the main customer interface including product listing, searching, and sorting.
- * Manages the flow between the UI and the data model.
+ * Manages the data flow between the UI components and the database layer.
  *
  * @author Zafer Mert Serinken
  */
 public class CustomerController implements Initializable {
 
-    // These IDs must match fx:id in SceneBuilder
     @FXML private TextField searchField;
-    @FXML private FlowPane veggieContainer; // Place inside the Vegetable TitledPane
-    @FXML private FlowPane fruitContainer;  // Place inside the Fruit TitledPane
+    @FXML private FlowPane veggieContainer;
+    @FXML private FlowPane fruitContainer;
     @FXML private Label welcomeLabel;
 
-    // In-memory list to hold products until DB is connected
     private ObservableList<Product> allProducts = FXCollections.observableArrayList();
     private ProductDAO productDAO = new DBProductDAO();
 
     /**
      * Initializes the controller class.
-     * Automatically called after the fxml file has been loaded.
+     * Fetches product data from the database, sets up initial displays,
+     * and attaches listeners for search functionality.
+     *
+     * @param location  The location used to resolve relative paths for the root object.
+     * @param resources The resources used to localize the root object.
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // 1. Load data (DB)
+        // Load product data from the database
         loadData();
 
-        // 2. Display initial data sorted by name
+        // Initial display of data sorted alphabetically by name
         refreshProductDisplays("");
 
-        // 3. Add listener for search functionality
+        // Register a listener for real-time search filtering
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
             refreshProductDisplays(newValue);
         });
 
-        // Show user info (mockup)
-        // welcomeLabel.setText("Welcome, Zafer");
+        // Set personalized welcome message for the current user
         Models.User currentUser = Service.AuthService.getInstance().getCurrentUser();
         if (currentUser != null) {
             welcomeLabel.setText("Welcome, " + currentUser.getFullName());
@@ -66,28 +67,26 @@ public class CustomerController implements Initializable {
     }
 
     /**
-     * Filters the product list based on the search query and refreshes the UI.
-     * Also applies sorting by name.
+     * Filters the product list based on the search query, sorts the results by name,
+     * and updates the UI containers.
      *
      * @param query The search keyword entered by the user.
      */
     private void refreshProductDisplays(String query) {
-        // Clear current views
         veggieContainer.getChildren().clear();
         fruitContainer.getChildren().clear();
 
         String lowerCaseQuery = query.toLowerCase();
 
-        // Stream API for Filtering & Sorting
+        // Use Stream API for filtering and sorting requirements
         List<Product> filteredList = allProducts.stream()
-                .filter(p -> p.getName().toLowerCase().contains(lowerCaseQuery)) // Search Filter
-                .sorted(Comparator.comparing(Product::getName)) // Sort by Name [Requirement]
+                .filter(p -> p.getName().toLowerCase().contains(lowerCaseQuery))
+                .sorted(Comparator.comparing(Product::getName))
                 .collect(Collectors.toList());
 
-        // Distribute to containers
+        // Populate category containers dynamically
         for (Product p : filteredList) {
             try {
-                // Determine which container to add to
                 if ("VEGETABLE".equalsIgnoreCase(p.getType())) {
                     veggieContainer.getChildren().add(createProductCard(p));
                 } else if ("FRUIT".equalsIgnoreCase(p.getType())) {
@@ -101,19 +100,16 @@ public class CustomerController implements Initializable {
     }
 
     /**
-     * Dynamically loads a ProductCard FXML and populates it with product data.
+     * Dynamically loads a ProductCard FXML component and populates it with product details.
      *
-     * @param product The product object to display.
-     * @return The Node (UI element) representing the product card.
-     * @throws IOException If FXML loading fails.
+     * @param product   The product model to be displayed on the card.
+     * @return          A Node representing the visual product card.
+     * @throws IOException If the FXML file cannot be loaded.
      */
     private Node createProductCard(Product product) throws IOException {
-        // NOTE: We will create ProductCard.fxml and its controller in the next step.
-        // This is how we load reusable components in JavaFX.
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ProductCard.fxml"));
         Node cardNode = loader.load();
 
-        // Get the controller of the card to pass data
         ProductCardController cardController = loader.getController();
         cardController.setProductData(product);
 
@@ -121,15 +117,14 @@ public class CustomerController implements Initializable {
     }
 
     /**
-     * Loads products from the database.
+     * Synchronizes the in-memory observable list with the product records in the database.
      */
     private void loadData() {
         allProducts.setAll(productDAO.getAllProducts());
     }
 
     /**
-     * Opens the Shopping Cart in a new window (Stage).
-     * Linked to the "My Cart" button in the main UI.
+     * Opens the Shopping Cart interface in a new modal window.
      */
     @FXML
     private void handleShowCart() {
@@ -141,9 +136,7 @@ public class CustomerController implements Initializable {
 
             stage.setTitle("My Shopping Cart");
             stage.setScene(new javafx.scene.Scene(root));
-
             stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
-
             stage.show();
 
         } catch (IOException e) {
@@ -151,6 +144,10 @@ public class CustomerController implements Initializable {
             System.err.println("Could not open Cart View. Check file path!");
         }
     }
+
+    /**
+     * Opens the User Profile management interface in a new modal window.
+     */
     @FXML
     private void handleShowProfile() {
         try {
@@ -167,6 +164,9 @@ public class CustomerController implements Initializable {
         }
     }
 
+    /**
+     * Logs the current user out of the application and redirects to the login screen.
+     */
     @FXML
     private void handleLogout() {
         Service.AuthService.getInstance().logout();

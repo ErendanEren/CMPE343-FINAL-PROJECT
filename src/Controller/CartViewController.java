@@ -20,7 +20,8 @@ import javafx.scene.control.Alert.AlertType;
 
 /**
  * Controls the Shopping Cart interface.
- * Displays selected items, allows removal, and shows total cost.
+ * Displays selected items, allows removal, handles coupon application,
+ * and manages the final checkout process.
  *
  * @author Zafer Mert Serinken
  */
@@ -43,6 +44,11 @@ public class CartViewController {
     private OrderService orderService = new OrderService();
     private static final double MIN_CART_VALUE = 50.0;
 
+    /**
+     * Initializes the controller class.
+     * Sets up table column bindings, populates delivery time slots,
+     * and displays available coupons from the database.
+     */
     @FXML
     public void initialize() {
         // Bind columns to CartItem properties
@@ -73,7 +79,7 @@ public class CartViewController {
                 "17:00 - 19:00"
         );
 
-        // Show available coupons
+        // Fetch and display available coupons for the user
         Dao.CouponDAO couponDAO = new Dao.DBCouponDAO();
         java.util.List<Models.Coupon> coupons = couponDAO.getAllCoupons();
         if (!coupons.isEmpty()) {
@@ -82,12 +88,13 @@ public class CartViewController {
                 couponCodes.append(c.getCode()).append(" ");
             }
             lblCouponMessage.setText(couponCodes.toString());
-            lblCouponMessage.setStyle("-fx-text-fill: green;"); // Make it visible/positive
+            lblCouponMessage.setStyle("-fx-text-fill: green;");
         }
     }
 
     /**
-     * Removes the selected item from the cart and refreshes the total.
+     * Removes the selected item from the shopping cart.
+     * Refreshes the table view and the total price after removal.
      */
     @FXML
     private void handleRemoveItem() {
@@ -102,6 +109,10 @@ public class CartViewController {
         }
     }
 
+    /**
+     * Validates and applies a coupon code entered by the user.
+     * Updates the total price if the coupon is valid.
+     */
     @FXML
     private void handleApplyCoupon() {
         String code = txtCouponCode.getText();
@@ -119,18 +130,17 @@ public class CartViewController {
         } else {
             lblCouponMessage.setText("Invalid or expired coupon.");
             lblCouponMessage.setStyle("-fx-text-fill: red;");
-            updateTotalLabel(); // In case a previous coupon was removed/invalidated internally (though logic keeps it null if fail)
+            updateTotalLabel();
         }
     }
 
     /**
-     * Updates the total price label including VAT text.
+     * Updates the total price label.
+     * Incorporates VAT and reflects any applied discounts.
      */
     private void updateTotalLabel() {
         double total = ShoppingCart.getInstance().calculateTotal();
-        // Assuming VAT is included or calculated here.
 
-        // Project doc says "total cost including taxes (VAT)" [cite: 32]
         if (ShoppingCart.getInstance().getAppliedCoupon() != null) {
             totalPriceLabel.setText(String.format("Total: %.2f TL (Coupon Applied)", total));
         } else {
@@ -138,6 +148,11 @@ public class CartViewController {
         }
     }
 
+    /**
+     * Processes the final checkout.
+     * Performs validation for user login, minimum cart value,
+     * and delivery schedule before placing the order via OrderService.
+     */
     @FXML
     private void handleCheckout() {
         User user = AuthService.getInstance().getCurrentUser();
@@ -146,37 +161,29 @@ public class CartViewController {
             return;
         }
 
-        // 1. Min Cart Value Check
+        // Validate Minimum Cart Value
         if (ShoppingCart.getInstance().calculateTotal() < MIN_CART_VALUE) {
             showAlert("Minimum Order", "Minimum cart value must be " + MIN_CART_VALUE + " TL.");
             return;
         }
 
-        // 2. Delivery Time Validation
+        // Validate Delivery Schedule Info
         if (datePickerDelivery.getValue() == null || comboDeliveryTime.getValue() == null) {
             showAlert("Delivery Info Missing", "Please select a delivery date and time slot.");
             return;
         }
 
-        // Combine date and time (simplified for now as String or LocalDateTime parsing)
         String deliveryInfo = datePickerDelivery.getValue().toString() + " " + comboDeliveryTime.getValue();
 
         try {
-            // Pass delivery info to placeOrder (Requires updating OrderService signature)
-            // For now, setting it via a transient method or updating the service first?
-            // I'll update the Service call here assuming I'll update Service next.
-            // Actually, let's keep the call signature same if I can't change it atomically,
-            // OR change OrderService signature first.
-            // Let's pass it as a separate argument.
-
+            // Place the order using the OrderService
             Order order = orderService.placeOrder(user, ShoppingCart.getInstance(), deliveryInfo);
 
             showAlert("Order Successful", "Your order has been placed!\nOrder ID: " + order.getId() + "\nInvoice generated.");
 
-            // Close cart or refresh UI
+            // Refresh UI and return to main dashboard
             cartTable.refresh();
             updateTotalLabel();
-            // Possibly close window?
             handleBack();
         } catch (IllegalStateException e) {
             showAlert("Cart Empty", "Your cart is empty.");
@@ -186,6 +193,11 @@ public class CartViewController {
         }
     }
 
+    /**
+     * Utility method to display an alert dialog.
+     * * @param title   The title of the alert.
+     * @param content The message content of the alert.
+     */
     private void showAlert(String title, String content) {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle(title);
@@ -194,9 +206,11 @@ public class CartViewController {
         alert.showAndWait();
     }
 
+    /**
+     * Closes the current shopping cart window.
+     */
     @FXML
     private void handleBack() {
-        // Close the cart window
         Stage stage = (Stage) cartTable.getScene().getWindow();
         stage.close();
     }
