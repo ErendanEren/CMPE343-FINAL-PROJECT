@@ -8,10 +8,28 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service class responsible for managing the order lifecycle, including placement,
+ * loyalty discount application, stock management, and invoice persistence.
+ *
+ * @author eren çakır
+ * @author mert serinken
+ */
 public class OrderService {
 
     private OrderDao orderDao = new DBOrderDAO();
 
+    /**
+     * Processes the placement of a new order. This includes validating the cart,
+     * calculating delivery times, applying loyalty discounts if applicable,
+     * updating product stock levels, and persisting the order and invoice.
+     *
+     * @param user         The user placing the order.
+     * @param cart         The shopping cart containing the items to be purchased.
+     * @param deliveryInfo A string containing delivery preferences or time slots.
+     * @return The completed {@link Order} object.
+     * @throws IllegalStateException If the provided shopping cart is empty.
+     */
     public Order placeOrder(User user, ShoppingCart cart, String deliveryInfo) {
         if (cart.getItems().isEmpty()) {
             throw new IllegalStateException("Cart is empty");
@@ -23,15 +41,8 @@ public class OrderService {
         order.setOrderTime(LocalDateTime.now());
         order.setOrderTime(LocalDateTime.now());
 
-        // Parse delivery info if needed. For now, we MUST set it to avoid NULL constraint.
-        // Delivery Info format example: "2026-01-08 13:00 - 15:00"
         try {
             if (deliveryInfo != null && deliveryInfo.length() >= 10) {
-                String datePart = deliveryInfo.split(" ")[0]; // "2026-01-08"
-                // Simple parsing or just set to orderTime + 1 day if fail.
-                // Let's rely on LocalDateTime.parse if format matches, otherwise default.
-                // Since format varies, let's just use Now + 24 Hours as a placeholder for the TIMESTAMP column
-                // provided we store text in addressSnapshot for human reading.
                 order.setRequestedDeliveryTime(LocalDateTime.now().plusDays(1));
             } else {
                 order.setRequestedDeliveryTime(LocalDateTime.now().plusDays(1));
@@ -52,16 +63,10 @@ public class OrderService {
             oi.setLineTotal(ci.getItemTotal());
             orderItems.add(oi);
         }
-        // order.setItems(orderItems); // Already done above? No, wait, loop above adds.
-        // Actually the loop above iterates valid cart items.
-        // We need to decrease stock now.
 
-        // Need ProductDAO instance
-        // Check for Loyalty Discount
         Dao.OwnerSettingsDAO settingsDAO = new Dao.DBOwnerSettingsDAO();
         Models.OwnerSettings settings = settingsDAO.getSettings();
 
-        // Default to no discount
         order.setLoyaltyDiscountPercent(0.0);
 
         if (settings != null) {
@@ -71,7 +76,6 @@ public class OrderService {
                 order.setLoyaltyDiscountPercent(discountPercent);
                 System.out.println("Loyalty Discount Applied: " + discountPercent + "% (Completed Orders: " + completedOrders + ")");
 
-                // Apply discount to total amount
                 double currentTotal = order.getTotalAmount();
                 double discountAmount = currentTotal * (discountPercent / 100.0);
                 order.setTotalAmount(currentTotal - discountAmount);
@@ -83,40 +87,48 @@ public class OrderService {
         for (OrderItem oi : orderItems) {
             boolean success = productDAO.decreaseStock(oi.getProductId(), oi.getAmountKg());
             if (!success) {
-                // If stock update fails (e.g., race condition), we should probably rollback or warn.
-                // For this project, we'll log it.
                 System.err.println("Warning: Could not decrease stock for Product ID: " + oi.getProductId());
             }
         }
-        order.setItems(orderItems); // Ensure items are set
+        order.setItems(orderItems);
 
-        // Append delivery info to address snapshot for simple persistence
         String fullAddressInfo = user.getAddress() + " | Delivery: " + deliveryInfo;
         order.setCustomerAddressSnapshot(fullAddressInfo);
 
         orderDao.saveOrder(order);
 
-        // Generate Invoice File
         saveInvoiceToFile(order, user, deliveryInfo);
 
-        // Clear cart
         cart.clearCart();
 
         return order;
     }
 
+    /**
+     * Generates the invoice content and persists it to the database for a specific order.
+     *
+     * @param order        The finalized order object.
+     * @param user         The user who placed the order.
+     * @param deliveryInfo Information regarding the delivery.
+     */
     private void saveInvoiceToFile(Order order, User user, String deliveryInfo) {
         String invoiceContent = generateInvoice(order, user, deliveryInfo);
 
-        // Save to Database
         Dao.InvoiceDAO invoiceDAO = new Dao.DBInvoiceDAO();
         invoiceDAO.saveInvoice(order.getId(), invoiceContent);
 
-        // Invoice is already saved to DB above by DBInvoiceDAO.
         System.out.println("Invoice generated and saved to database for Order ID: " + order.getId());
     }
 
-    // Overloaded to support old usage if any, or just helper
+    /**
+     * Generates a detailed string representation of the invoice, including customer details,
+     * product breakdowns, and applied loyalty discounts.
+     *
+     * @param order        The order for which the invoice is generated.
+     * @param user         The user associated with the order.
+     * @param deliveryInfo The delivery notes provided during checkout.
+     * @return A formatted string containing the full invoice details.
+     */
     public String generateInvoice(Order order, User user, String deliveryInfo) {
         StringBuilder sb = new StringBuilder();
         sb.append("============= INVOICE =============\n");
@@ -141,6 +153,12 @@ public class OrderService {
         return sb.toString();
     }
 
+    /**
+     * Generates a summary string representation of the invoice using only the order data.
+     *
+     * @param order The order for which the summary is generated.
+     * @return A formatted string containing the summary invoice.
+     */
     public String generateInvoice(Order order) {
         StringBuilder sb = new StringBuilder();
         sb.append("INVOICE\n");
