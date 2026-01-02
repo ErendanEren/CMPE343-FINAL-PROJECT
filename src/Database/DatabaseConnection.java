@@ -50,7 +50,7 @@ public class DatabaseConnection {
     }
 
     public static User login(String username, String password) {
-        String sql = "SELECT * FROM user_info WHERE username = ?";
+        String sql = "SELECT * FROM group09_greengrocer.user_info WHERE username = ?";
 
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -79,7 +79,7 @@ public class DatabaseConnection {
                 user.setFullName(rs.getString("full_name"));
                 user.setPhone(rs.getString("phone"));
                 user.setEmail(rs.getString("email"));
-                user.setAddress(rs.getString("address"));
+                user.setAddress(rs.getString("address_line"));
                 user.setRole(rs.getString("role"));
                 user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
 

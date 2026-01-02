@@ -11,7 +11,7 @@ public class DBProductDAO implements ProductDAO {
     @Override
     public List<Product> getAllProducts() {
         List<Product> products = new ArrayList<>();
-        String sql = "SELECT * FROM products";
+        String sql = "SELECT * FROM group09_greengrocer.product_info";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -28,7 +28,7 @@ public class DBProductDAO implements ProductDAO {
 
     @Override
     public void addProduct(Product product) {
-        String sql = "INSERT INTO products (name, type, price_per_kg, stock_kg, threshold_kg, image_path, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO group09_greengrocer.product_info (name, type, price_per_kg, stock_kg, threshold_kg, image_blob, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -57,7 +57,7 @@ public class DBProductDAO implements ProductDAO {
         // Actually Product has ID. Let's rely on ID for safe updates if possible.
         // However, the object passed from UI might just be updated fields.
 
-        String sql = "UPDATE products SET name=?, type=?, price_per_kg=?, stock_kg=?, threshold_kg=?, image_path=?, is_active=? WHERE id=?";
+        String sql = "UPDATE group09_greengrocer.product_info SET name=?, type=?, price_per_kg=?, stock_kg=?, threshold_kg=?, image_blob=?, is_active=? WHERE id=?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -85,7 +85,7 @@ public class DBProductDAO implements ProductDAO {
 
     @Override
     public void deleteProduct(int productId) {
-        String sql = "DELETE FROM products WHERE id = ?";
+        String sql = "DELETE FROM group09_greengrocer.product_info WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -106,7 +106,10 @@ public class DBProductDAO implements ProductDAO {
         p.setPricePerKg(rs.getDouble("price_per_kg"));
         p.setStockKg(rs.getDouble("stock_kg"));
         p.setThresholdKg(rs.getDouble("threshold_kg"));
-        p.setImagePath(rs.getString("image_path"));
+        // TODO: Handle BLOB properly. Temporarily reading as String/URL might fail if it's raw bytes.
+        // If it was a path stored in BLOB column (rare) it works, otherwise we need to update Logic.
+        // User asked to fix naming errors first.
+        p.setImagePath(rs.getString("image_blob"));
         p.setActive(rs.getBoolean("is_active"));
         return p;
     }

@@ -11,8 +11,8 @@ public class DBOrderDAO implements OrderDao {
 
     @Override
     public void saveOrder(Order order) {
-        String insertOrderSQL = "INSERT INTO orders (customer_id, carrier_id, order_time, requested_delivery_time, delivered_at, status, total_amount, customer_address_snapshot) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        String insertItemSQL = "INSERT INTO order_items (order_id, product_id, amount_kg, unit_price, line_total) VALUES (?, ?, ?, ?, ?)";
+        String insertOrderSQL = "INSERT INTO group09_greengrocer.order_info (customer_id, carrier_id, order_time, requested_delivery_time, delivered_at, status, total_amount, customer_address_snapshot) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertItemSQL = "INSERT INTO group09_greengrocer.order_item (order_id, product_id, amount_kg, unit_price, line_total) VALUES (?, ?, ?, ?, ?)";
 
         Connection conn = null;
         PreparedStatement psOrder = null;
@@ -87,7 +87,7 @@ public class DBOrderDAO implements OrderDao {
     @Override
     public List<Order> getOrdersByCustomer(int customerId) {
         List<Order> orders = new ArrayList<>();
-        String sql = "SELECT * FROM orders WHERE customer_id = ? ORDER BY order_time DESC";
+        String sql = "SELECT * FROM group09_greengrocer.order_info WHERE customer_id = ? ORDER BY order_time DESC";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
