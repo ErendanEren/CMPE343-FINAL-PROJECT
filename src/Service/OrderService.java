@@ -40,8 +40,7 @@ public class OrderService {
             order.setRequestedDeliveryTime(LocalDateTime.now().plusDays(1));
         }
 
-        order.setStatus("PENDING");
-        order.setStatus("PENDING");
+        order.setStatus("PLACED");
         order.setTotalAmount(cart.calculateTotal());
 
         List<OrderItem> orderItems = new ArrayList<>();

@@ -21,7 +21,7 @@ public class CarrierDAO {
     public List<Order> getAvailableOrders() {
         List<Order> orders = new ArrayList<>();
         // carrier_id IS NULL kontrolü ile sadece boştaki siparişler çekilir [cite: 122]
-        String sql = "SELECT * FROM OrderInfo WHERE carrier_id IS NULL AND (status = 'PLACED' OR status = 'CREATED')";
+        String sql = "SELECT * FROM group09_greengrocer.order_info WHERE carrier_id IS NULL AND (status = 'PLACED' OR status = 'CREATED')";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -44,7 +44,7 @@ public class CarrierDAO {
      */
     public List<Order> getOrdersByCarrier(int carrierId, String status) {
         List<Order> orders = new ArrayList<>();
-        String sql = "SELECT * FROM OrderInfo WHERE carrier_id = ? AND status = ?";
+        String sql = "SELECT * FROM group09_greengrocer.order_info WHERE carrier_id = ? AND status = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -70,7 +70,7 @@ public class CarrierDAO {
      */
     public boolean assignOrderToCarrier(int orderId, int carrierId) {
         // 'AND carrier_id IS NULL' şartı sunumda puan kaybetmeni engelleyen kritik kontroldür
-        String sql = "UPDATE OrderInfo SET carrier_id = ?, status = 'ASSIGNED' WHERE id = ? AND carrier_id IS NULL";
+        String sql = "UPDATE group09_greengrocer.order_info SET carrier_id = ?, status = 'ASSIGNED' WHERE id = ? AND carrier_id IS NULL";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -89,7 +89,7 @@ public class CarrierDAO {
      * Siparişi teslim edildi olarak işaretler ve teslimat zamanını kaydeder. [cite: 58, 123]
      */
     public boolean completeOrder(int orderId) {
-        String sql = "UPDATE OrderInfo SET status = 'DELIVERED', delivered_at = CURRENT_TIMESTAMP WHERE id = ?";
+        String sql = "UPDATE group09_greengrocer.order_info SET status = 'DELIVERED', delivered_at = CURRENT_TIMESTAMP WHERE id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -107,7 +107,7 @@ public class CarrierDAO {
      */
     public List<CarrierRating> getRatingsForCarrier(int carrierId) {
         List<CarrierRating> ratings = new ArrayList<>();
-        String sql = "SELECT * FROM CarrierRating WHERE carrier_id = ?";
+        String sql = "SELECT * FROM group09_greengrocer.carrier_rating WHERE carrier_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -133,7 +133,7 @@ public class CarrierDAO {
      * ALTYAPI GÖREVİ: Resim dosyalarını BLOB olarak kaydetmek için yardımcı metot. [cite: 44, 135]
      */
     public void saveImage(int productId, byte[] imageBytes) throws SQLException {
-        String sql = "UPDATE ProductInfo SET image_blob = ? WHERE id = ?";
+        String sql = "UPDATE group09_greengrocer.product_info SET image_blob = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setBytes(1, imageBytes);
@@ -155,10 +155,14 @@ public class CarrierDAO {
 
         order.setStatus(rs.getString("status"));
         order.setTotalAmount(rs.getDouble("total_amount"));
-        order.setCustomerAddressSnapshot(rs.getString("customer_address"));
+        // DBOrderDAO'da olduğu gibi `customer_address_snapshot` kullanıyoruz.
+        order.setCustomerAddressSnapshot(rs.getString("customer_address_snapshot"));
 
         Timestamp deliveryTime = rs.getTimestamp("requested_delivery_time");
         if (deliveryTime != null) order.setRequestedDeliveryTime(deliveryTime.toLocalDateTime());
+
+        Timestamp deliveredAt = rs.getTimestamp("delivered_at");
+        if (deliveredAt != null) order.setDeliveredAt(deliveredAt.toLocalDateTime());
 
         return order;
     }

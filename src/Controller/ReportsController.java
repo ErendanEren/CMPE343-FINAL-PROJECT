@@ -39,12 +39,12 @@ public class ReportsController implements Initializable {
         }
 
         pieChartStock.setData(pieData);
-        pieChartStock.setTitle("Depo Stok Dağılımı (Kg)");
+        pieChartStock.setTitle("Stock Distribution (Kg)");
     }
 
     private void loadIncomeChart() {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Günlük Ciro");
+        series.setName("Daily Revenue");
 
         Map<String, Double> data = reportDAO.getDailyIncome();
 
@@ -55,6 +55,6 @@ public class ReportsController implements Initializable {
         }
 
         barChartIncome.getData().add(series);
-        barChartIncome.setTitle("Haftalık Gelir Analizi");
+        barChartIncome.setTitle("Weekly Income Analysis");
     }
 }

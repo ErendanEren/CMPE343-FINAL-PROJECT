@@ -20,7 +20,7 @@ public class Product {
 
     private String imagePath;
     private byte[] imageContent;
-
+    private String mimeType;
 
 
     private boolean isActive;
@@ -30,7 +30,7 @@ public class Product {
     /**
      * Constructor including BLOB image data (For Database operations)
      */
-    public Product(int id, String name, String type, double pricePerKg, double stockKg, double thresholdKg, byte[] imageContent) {
+    public Product(int id, String name, String type, double pricePerKg, double stockKg, double thresholdKg, byte[] imageContent, String mimeType) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -38,6 +38,7 @@ public class Product {
         this.stockKg = stockKg;
         this.thresholdKg = thresholdKg;
         this.imageContent = imageContent;
+        this.mimeType = mimeType;
         this.isActive = true;
     }
 
@@ -109,6 +110,9 @@ public class Product {
 
     public String getImagePath() { return imagePath; }
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
+
+    public String getMimeType() { return mimeType; }
+    public void setMimeType(String mimeType) { this.mimeType = mimeType; }
 
 
 

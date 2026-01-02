@@ -19,32 +19,32 @@
                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
             </padding>
             <children>
-                <Label text="Ürün Yönetimi" textFill="#2c3e50">
+                <Label text="Product Management (Active)" textFill="#2c3e50">
                     <font>
                         <Font name="System Bold" size="20.0" />
                     </font>
                 </Label>
 
-                <MFXTextField fx:id="txtName" floatMode="BORDER" floatingText="Ürün Adı" prefWidth="260.0" />
+                <MFXTextField fx:id="txtName" floatMode="BORDER" floatingText="Product Name" prefWidth="260.0" />
 
-                <MFXComboBox fx:id="comboType" floatMode="BORDER" floatingText="Kategori" prefWidth="260.0" />
+                <MFXComboBox fx:id="comboType" floatMode="BORDER" floatingText="Category" prefWidth="260.0" />
 
-                <MFXTextField fx:id="txtPrice" floatMode="BORDER" floatingText="Birim Fiyat (TL)" prefWidth="260.0" />
+                <MFXTextField fx:id="txtPrice" floatMode="BORDER" floatingText="Unit Price (TL)" prefWidth="260.0" />
 
-                <MFXTextField fx:id="txtStock" floatMode="BORDER" floatingText="Stok Miktarı (Kg)" prefWidth="260.0" />
+                <MFXTextField fx:id="txtStock" floatMode="BORDER" floatingText="Stock Amount (Kg)" prefWidth="260.0" />
 
-                <MFXTextField fx:id="txtThreshold" floatMode="BORDER" floatingText="Kritik Stok Sınırı" prefWidth="260.0" />
+                <MFXTextField fx:id="txtThreshold" floatMode="BORDER" floatingText="Critical Stock Limit" prefWidth="260.0" />
 
-                <MFXButton fx:id="btnChooseImage" buttonType="RAISED" prefHeight="35.0" prefWidth="260.0" style="-fx-background-color: #bdc3c7;" text="Resim Seç..." textFill="WHITE" />
+                <MFXButton fx:id="btnChooseImage" buttonType="RAISED" prefHeight="35.0" prefWidth="260.0" style="-fx-background-color: #bdc3c7;" text="Choose Image..." textFill="WHITE" />
 
                 <HBox alignment="CENTER" spacing="10.0">
                     <children>
-                        <MFXButton fx:id="btnAdd" buttonType="RAISED" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #27ae60;" text="EKLE" textFill="WHITE">
+                        <MFXButton fx:id="btnAdd" buttonType="RAISED" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #27ae60;" text="ADD" textFill="WHITE">
                             <font>
                                 <Font name="System Bold" size="12.0" />
                             </font>
                         </MFXButton>
-                        <MFXButton fx:id="btnUpdate" buttonType="RAISED" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #f39c12;" text="GÜNCELLE" textFill="WHITE">
+                        <MFXButton fx:id="btnUpdate" buttonType="RAISED" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #f39c12;" text="UPDATE" textFill="WHITE">
                             <font>
                                 <Font name="System Bold" size="12.0" />
                             </font>
@@ -54,7 +54,7 @@
                         <Insets top="10.0" />
                     </VBox.margin>
                 </HBox>
-                <MFXButton fx:id="btnDelete" buttonType="RAISED" prefHeight="40.0" prefWidth="260.0" style="-fx-background-color: #c0392b;" text="SEÇİLİ ÜRÜNÜ SİL" textFill="WHITE">
+                <MFXButton fx:id="btnDelete" buttonType="RAISED" prefHeight="40.0" prefWidth="260.0" style="-fx-background-color: #c0392b;" text="DELETE SELECTED" textFill="WHITE">
                     <font>
                         <Font name="System Bold" size="12.0" />
                     </font>
@@ -64,11 +64,11 @@
 
         <TableView fx:id="tableProducts" layoutX="340.0" layoutY="20.0" prefHeight="560.0" prefWidth="540.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="340.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
             <columns>
-                <TableColumn fx:id="colName" prefWidth="120.0" text="Ürün Adı" />
-                <TableColumn fx:id="colType" prefWidth="90.0" text="Tür" />
-                <TableColumn fx:id="colPrice" prefWidth="90.0" text="Fiyat (TL)" />
-                <TableColumn fx:id="colStock" prefWidth="90.0" text="Stok (Kg)" />
-                <TableColumn fx:id="colThreshold" prefWidth="100.0" text="Sınır (Kg)" />
+                <TableColumn fx:id="colName" prefWidth="120.0" text="Product Name" />
+                <TableColumn fx:id="colType" prefWidth="90.0" text="Type" />
+                <TableColumn fx:id="colPrice" prefWidth="90.0" text="Price (TL)" />
+                <TableColumn fx:id="colStock" prefWidth="90.0" text="Stock (Kg)" />
+                <TableColumn fx:id="colThreshold" prefWidth="100.0" text="Limit (Kg)" />
             </columns>
         </TableView>
     </children>

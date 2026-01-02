@@ -29,17 +29,27 @@ public class OwnerController implements Initializable {
         btnReports.setOnAction(e -> loadPage("/fxml/Reports.fxml"));
 
         btnLogout.setOnAction(e -> {
-            System.out.println("Çıkış yapılıyor...");
+            Service.AuthService.getInstance().logout();
+            Utils.SceneManager.switchSceneStatic("/fxml/Login.fxml");
         });
     }
 
     private void loadPage(String fxmlPath) {
+        System.out.println("DEBUG: Requesting to load FXML: " + fxmlPath);
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            URL resource = getClass().getResource(fxmlPath);
+            if (resource == null) {
+                System.err.println("DEBUG: Resource NOT FOUND: " + fxmlPath);
+                return;
+            }
+            System.out.println("DEBUG: Resource Found: " + resource.toExternalForm());
+
+            FXMLLoader loader = new FXMLLoader(resource);
             Parent view = loader.load();
             mainPane.setCenter(view); // Ortadaki alanı değiştir
+            System.out.println("DEBUG: Scene switched successfully to: " + fxmlPath);
         } catch (IOException e) {
-            System.err.println("Sayfa yüklenemedi: " + fxmlPath);
+            System.err.println("DEBUG: Sayfa yüklenemedi: " + fxmlPath);
             e.printStackTrace();
         }
     }

@@ -60,6 +60,11 @@ public class StaffManagerController implements Initializable {
         // İşe Al (Ekle)
         btnHire.setOnAction(event -> {
             try {
+                // Name Validation
+                if (!Utils.ValidationUtils.validateNameField(txtFullName, "Full Name")) {
+                    return;
+                }
+
                 User newCarrier = new User(
                         txtUsername.getText(),
                         txtPassword.getText(), // Gerçekte hashlenmeli ama şimdilik düz

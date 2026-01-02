@@ -9,6 +9,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox alignment="TOP_CENTER" prefHeight="540.0" prefWidth="960.0" spacing="10" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.CarrierController">
@@ -16,7 +17,11 @@
         <Insets bottom="20" left="20" right="20" top="20" />
     </padding>
 
-    <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Group09 Greengrocer - Carrier Dashboard" />
+    <HBox alignment="CENTER_LEFT" spacing="20">
+        <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Group09 Greengrocer - Carrier Dashboard" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Button text="Logout" onAction="#handleLogout" style="-fx-background-color: #d32f2f; -fx-text-fill: white; -fx-cursor: hand;" />
+    </HBox>
 
     <TabPane fx:id="carrierTabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
 

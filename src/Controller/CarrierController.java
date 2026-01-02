@@ -1,6 +1,7 @@
 package Controller;
 
-import App.SceneManager;
+import Service.AuthService;
+import Utils.SceneManager;
 import Dao.CarrierDAO;
 import Dao.MessageDao;
 import Models.CarrierRating;
@@ -55,6 +56,15 @@ public class CarrierController {
         setupTableColumns();
         refreshTables();
         loadRatings();
+
+        // 3 saniyede bir tabloyu otomatik yenile (Anlık Takip)
+        javafx.animation.Timeline timeline = new javafx.animation.Timeline(
+                new javafx.animation.KeyFrame(javafx.util.Duration.seconds(3), event -> {
+                    refreshTables();
+                })
+        );
+        timeline.setCycleCount(javafx.animation.Timeline.INDEFINITE);
+        timeline.play();
     }
 
     private void setupTableColumns() {
@@ -190,5 +200,10 @@ public class CarrierController {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+    @FXML
+    private void handleLogout() {
+        AuthService.getInstance().logout();
+        SceneManager.switchSceneStatic("/fxml/Login.fxml");
     }
 }
