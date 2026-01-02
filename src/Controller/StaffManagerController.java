@@ -17,6 +17,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Controller class for managing the staff (carriers) interface.
+ * Provides functionality for owners to hire and fire staff members and view carrier lists.
+ * * @author Selçuk Aloba
+ */
 public class StaffManagerController implements Initializable {
 
     @FXML private TableView<User> tableStaff;
@@ -37,6 +42,13 @@ public class StaffManagerController implements Initializable {
     private UserDAO userDAO = new DBUserDAO();
     private ObservableList<User> carrierList;
 
+    /**
+     * Initializes the controller class. Sets up the table, loads data, and
+     * configures the button actions.
+     * * @param location The location used to resolve relative paths for the root object.
+     * @param resources The resources used to localize the root object.
+     * @author Selçuk Aloba
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setupTable();
@@ -44,6 +56,10 @@ public class StaffManagerController implements Initializable {
         setupActions();
     }
 
+    /**
+     * Configures the table columns by mapping them to the fields in the User model.
+     * * @author Selçuk Aloba
+     */
     private void setupTable() {
         colUsername.setCellValueFactory(new PropertyValueFactory<>("username"));
         colFullName.setCellValueFactory(new PropertyValueFactory<>("fullName"));
@@ -51,33 +67,40 @@ public class StaffManagerController implements Initializable {
         colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
     }
 
+    /**
+     * Fetches all carrier data from the database and populates the TableView.
+     * * @author Selçuk Aloba
+     */
     private void loadData() {
         carrierList = FXCollections.observableArrayList(userDAO.getAllCarriers());
         tableStaff.setItems(carrierList);
     }
 
+    /**
+     * Sets up action listeners for hiring and firing staff members.
+     * Handles user creation and deletion logic.
+     * * @author Selçuk Aloba
+     */
     private void setupActions() {
-        // İşe Al (Ekle)
         btnHire.setOnAction(event -> {
             try {
                 User newCarrier = new User(
                         txtUsername.getText(),
-                        txtPassword.getText(), // Gerçekte hashlenmeli ama şimdilik düz
+                        txtPassword.getText(),
                         txtFullName.getText(),
                         txtPhone.getText(),
                         txtEmail.getText(),
-                        "", // Adres boş olabilir kurye için
+                        "",
                         "CARRIER"
                 );
                 userDAO.addCarrier(newCarrier);
-                loadData(); // Tabloyu yenile
+                loadData();
                 clearForm();
             } catch (Exception e) {
                 System.out.println("Ekleme hatası: " + e.getMessage());
             }
         });
 
-        // Kov (Sil)
         btnFire.setOnAction(event -> {
             User selected = tableStaff.getSelectionModel().getSelectedItem();
             if (selected != null) {
@@ -87,6 +110,10 @@ public class StaffManagerController implements Initializable {
         });
     }
 
+    /**
+     * Clears all input fields in the hiring form.
+     * * @author Selçuk Aloba
+     */
     private void clearForm() {
         txtUsername.clear();
         txtPassword.clear();

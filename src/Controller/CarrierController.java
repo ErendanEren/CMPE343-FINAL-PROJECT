@@ -15,29 +15,29 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-
+/**
+ * Controller class for managing the Carrier dashboard interface.
+ * Handles order assignments, delivery updates, messaging with customers,
+ * and displaying performance ratings.
+ * * @author Arda Dülger
+ */
 public class CarrierController {
-
 
     @FXML private TableView<Order> availableTable;
     @FXML private TableColumn<Order, Integer> colId;
     @FXML private TableColumn<Order, String> colAddress;
     @FXML private TableColumn<Order, Double> colAmount;
 
-    // 2. SEKME: Active Orders (Kuryenin Üzerindeki Siparişler)
     @FXML private TableView<Order> activeTable;
     @FXML private TableColumn<Order, Integer> colActiveId;
     @FXML private TableColumn<Order, String> colActiveAddress;
 
-    // 3. SEKME: Completed Orders (Tamamlananlar)
     @FXML private TableView<Order> completedTable;
     @FXML private TableColumn<Order, Integer> colCompId;
     @FXML private TableColumn<Order, String> colCompAddress;
     @FXML private TableColumn<Order, Double> colCompAmount;
-    // Yeni eklenen gerçek teslimat tarihi sütunu
     @FXML private TableColumn<Order, LocalDateTime> colCompDeliveredAt;
 
-    // 4. SEKME: Puanlar ve Performans
     @FXML private ListView<String> ratingListView;
     @FXML private Label lblAverageRating;
 
@@ -46,7 +46,10 @@ public class CarrierController {
     private User currentUser;
 
     /**
-     * Ekran yüklendiğinde otomatik çalışan metot.
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded. It sets up the current user,
+     * table columns, and loads initial data.
+     * * @author Arda Dülger
      */
     @FXML
     public void initialize() {
@@ -57,6 +60,11 @@ public class CarrierController {
         loadRatings();
     }
 
+    /**
+     * Configures the cell value factories for all TableView columns,
+     * mapping them to the respective fields in the Order model.
+     * * @author Arda Dülger
+     */
     private void setupTableColumns() {
         // Available Table
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -71,12 +79,13 @@ public class CarrierController {
         colCompId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colCompAddress.setCellValueFactory(new PropertyValueFactory<>("customerAddressSnapshot"));
         colCompAmount.setCellValueFactory(new PropertyValueFactory<>("totalAmount"));
-        // delivered_at verisini Order modelindeki deliveredAt alanı ile eşleştiriyoruz
         colCompDeliveredAt.setCellValueFactory(new PropertyValueFactory<>("deliveredAt"));
     }
 
     /**
-     * Veritabanındaki güncel siparişleri uygun sekmelere dağıtır.
+     * Fetches current order data from the database and updates the
+     * Available, Active, and Completed order tables based on the current carrier's status.
+     * * @author Arda Dülger
      */
     private void refreshTables() {
         availableTable.setItems(FXCollections.observableArrayList(carrierDAO.getAvailableOrders()));
@@ -92,7 +101,9 @@ public class CarrierController {
     }
 
     /**
-     * Bir siparişi kuryenin üzerine zimmetler.
+     * Handles the pickup action. Assigns the selected available order
+     * to the current carrier and updates the UI.
+     * * @author Arda Dülger
      */
     @FXML
     private void handlePickUp() {
@@ -112,13 +123,14 @@ public class CarrierController {
     }
 
     /**
-     * Siparişi teslim edildi olarak işaretler ve delivered_at zamanını kaydeder.
+     * Handles the delivery completion. Marks the selected active order
+     * as delivered and records the delivery timestamp in the database.
+     * * @author Arda Dülger
      */
     @FXML
     private void handleDeliver() {
         Order selected = activeTable.getSelectionModel().getSelectedItem();
         if (selected != null && currentUser != null) {
-            // DAO içindeki completeOrder artık veritabanındaki delivered_at sütununu güncelliyor
             boolean success = carrierDAO.completeOrder(selected.getId());
             if (success) {
                 refreshTables();
@@ -130,7 +142,9 @@ public class CarrierController {
     }
 
     /**
-     * Müşteriye anlık mesaj gönderir.
+     * Opens a message dialog to allow the carrier to send a message
+     * to the customer associated with the selected active order.
+     * * @author Arda Dülger
      */
     @FXML
     private void handleSendMessage() {
@@ -164,7 +178,9 @@ public class CarrierController {
     }
 
     /**
-     * Kuryenin performans verilerini ve müşteri değerlendirmelerini yükler.
+     * Loads and displays the ratings and comments given to the current carrier.
+     * Also calculates and displays the average performance score.
+     * * @author Arda Dülger
      */
     private void loadRatings() {
         if (currentUser != null && ratingListView != null) {
@@ -184,6 +200,12 @@ public class CarrierController {
         }
     }
 
+    /**
+     * Helper method to display information alerts to the user.
+     * * @param title The title of the alert window.
+     * @param content The message content to be displayed.
+     * @author Arda Dülger
+     */
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
