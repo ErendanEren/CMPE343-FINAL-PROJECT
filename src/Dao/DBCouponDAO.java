@@ -11,7 +11,7 @@ public class DBCouponDAO implements CouponDAO {
     @Override
     public List<Coupon> getAllCoupons() {
         List<Coupon> coupons = new ArrayList<>();
-        String sql = "SELECT * FROM coupons"; // Assuming table name is coupons
+        String sql = "SELECT * FROM group09_greengrocer.coupon"; // Assuming table name is coupons
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -29,7 +29,7 @@ public class DBCouponDAO implements CouponDAO {
 
     @Override
     public Coupon getCouponByCode(String code) {
-        String sql = "SELECT * FROM coupons WHERE code = ?";
+        String sql = "SELECT * FROM group09_greengrocer.coupon WHERE code = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -47,7 +47,7 @@ public class DBCouponDAO implements CouponDAO {
 
     @Override
     public void addCoupon(Coupon coupon) {
-        String sql = "INSERT INTO coupons (code, discount_percent, min_total, valid_from, valid_to, is_active) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO group09_greengrocer.coupon (code, discount_percent, min_total, valid_from, valid_to, is_active) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -69,7 +69,7 @@ public class DBCouponDAO implements CouponDAO {
 
     @Override
     public void deleteCoupon(int id) {
-        String sql = "DELETE FROM coupons WHERE id = ?";
+        String sql = "DELETE FROM group09_greengrocer.coupon WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 

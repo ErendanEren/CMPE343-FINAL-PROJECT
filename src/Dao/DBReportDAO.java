@@ -11,7 +11,7 @@ public class DBReportDAO implements ReportDAO {
     @Override
     public Map<String, Double> getStockDistribution() {
         Map<String, Double> data = new HashMap<>();
-        String sql = "SELECT type, SUM(stock_kg) as total_stock FROM products GROUP BY type";
+        String sql = "SELECT type, SUM(stock_kg) as total_stock FROM group09_greengrocer.product_info GROUP BY type";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -34,7 +34,7 @@ public class DBReportDAO implements ReportDAO {
         Map<String, Double> data = new TreeMap<>();
         // Get last 7 days income
         String sql = "SELECT DATE(order_time) as order_date, SUM(total_amount) as daily_total " +
-                "FROM orders " +
+                "FROM group09_greengrocer.order_info " +
                 "WHERE status != 'CANCELLED' " +
                 "GROUP BY DATE(order_time) " +
                 "ORDER BY order_date DESC LIMIT 7";
