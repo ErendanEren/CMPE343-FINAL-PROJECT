@@ -76,7 +76,11 @@ public class ProductCardController {
         double amount = amountSpinner.getValue();
 
         if (amount > product.getStockKg()) {
-            // TODO: Show alert dialog to user (JavaFX Alert)
+            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
+            alert.setTitle("Insufficient Stock");
+            alert.setHeaderText("Not Enough Stock");
+            alert.setContentText("You requested " + amount + " kg, but only " + product.getStockKg() + " kg is available.");
+            alert.showAndWait();
             System.out.println("Error: Not enough stock!");
             return;
         }

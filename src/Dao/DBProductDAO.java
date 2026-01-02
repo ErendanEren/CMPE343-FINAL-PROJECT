@@ -37,7 +37,9 @@ public class DBProductDAO implements ProductDAO {
             ps.setDouble(3, product.getPricePerKg());
             ps.setDouble(4, product.getStockKg());
             ps.setDouble(5, product.getThresholdKg());
-            ps.setString(6, product.getImagePath());
+            ps.setDouble(5, product.getThresholdKg());
+            // Store imageContent if available, else null
+            ps.setBytes(6, product.getImageContent());
             ps.setBoolean(7, product.isActive());
 
             ps.executeUpdate();
@@ -66,7 +68,8 @@ public class DBProductDAO implements ProductDAO {
             ps.setDouble(3, product.getPricePerKg());
             ps.setDouble(4, product.getStockKg());
             ps.setDouble(5, product.getThresholdKg());
-            ps.setString(6, product.getImagePath());
+            ps.setDouble(5, product.getThresholdKg());
+            ps.setBytes(6, product.getImageContent());
             ps.setBoolean(7, product.isActive());
             ps.setInt(8, product.getId());
 
@@ -98,6 +101,25 @@ public class DBProductDAO implements ProductDAO {
         }
     }
 
+    @Override
+    public boolean decreaseStock(int productId, double amount) {
+        String sql = "UPDATE group09_greengrocer.product_info SET stock_kg = stock_kg - ? WHERE id = ? AND stock_kg >= ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setDouble(1, amount);
+            ps.setInt(2, productId);
+            ps.setDouble(3, amount); // Check if enough stock exists atomically
+
+            int affected = ps.executeUpdate();
+            return affected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private Product mapResultSetToProduct(ResultSet rs) throws SQLException {
         Product p = new Product();
         p.setId(rs.getInt("id"));
@@ -106,10 +128,8 @@ public class DBProductDAO implements ProductDAO {
         p.setPricePerKg(rs.getDouble("price_per_kg"));
         p.setStockKg(rs.getDouble("stock_kg"));
         p.setThresholdKg(rs.getDouble("threshold_kg"));
-        // TODO: Handle BLOB properly. Temporarily reading as String/URL might fail if it's raw bytes.
-        // If it was a path stored in BLOB column (rare) it works, otherwise we need to update Logic.
-        // User asked to fix naming errors first.
-        p.setImagePath(rs.getString("image_blob"));
+        p.setImageContent(rs.getBytes("image_blob"));
+        // p.setImagePath(rs.getString("image_blob")); // usually this fails if blob, redundant now
         p.setActive(rs.getBoolean("is_active"));
         return p;
     }

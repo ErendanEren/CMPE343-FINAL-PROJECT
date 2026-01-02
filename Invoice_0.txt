@@ -1,0 +1,14 @@
+============= INVOICE =============
+Order ID: 0
+Date: 2026-01-02T19:57:34.485617500
+Customer: Default Customer
+Address: Kadir Has Caddesi no:25
+Phone: 05354392123
+Delivery Info: 2026-01-01 15:00 - 17:00
+-----------------------------------
+Product ID 2 : 2,00 kg x 25,00 TL = 50,00 TL
+Product ID 4 : 2,00 kg x 28,00 TL = 56,00 TL
+-----------------------------------
+TOTAL AMOUNT: 106,00 TL
+===================================
+

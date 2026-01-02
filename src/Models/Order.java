@@ -14,6 +14,7 @@ public class Order {
     private String status;
     private double totalAmount;
     private String customerAddressSnapshot;
+    private double loyaltyDiscountPercent;
 
     // Siparişin içindeki ürünleri tutan liste
     private List<OrderItem> items = new ArrayList<>();
@@ -47,6 +48,9 @@ public class Order {
 
     public String getCustomerAddressSnapshot() { return customerAddressSnapshot; }
     public void setCustomerAddressSnapshot(String customerAddressSnapshot) { this.customerAddressSnapshot = customerAddressSnapshot; }
+
+    public double getLoyaltyDiscountPercent() { return loyaltyDiscountPercent; }
+    public void setLoyaltyDiscountPercent(double loyaltyDiscountPercent) { this.loyaltyDiscountPercent = loyaltyDiscountPercent; }
 
     public List<OrderItem> getItems() { return items; }
     public void setItems(List<OrderItem> items) { this.items = items; }

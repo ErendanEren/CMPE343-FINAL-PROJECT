@@ -17,7 +17,7 @@ public class LoginController {
     private AuthService authService;
 
     public LoginController() {
-        this.authService = new AuthService();
+        this.authService = AuthService.getInstance();
     }
 
     @FXML
@@ -48,7 +48,7 @@ public class LoginController {
                     SceneManager.switchSceneStatic("/fxml/CustomerDashboard.fxml");
                     break;
                 case "CARRIER":
-                    SceneManager.switchSceneStatic("/fxml/StaffManager.fxml");
+                    SceneManager.switchSceneStatic("/fxml/CarrierDashboard.fxml");
                     break;
                 case "OWNER":
                     SceneManager.switchSceneStatic("/fxml/OwnerDashboard.fxml");

@@ -72,6 +72,18 @@ public class CartViewController {
                 "15:00 - 17:00",
                 "17:00 - 19:00"
         );
+
+        // Show available coupons
+        Dao.CouponDAO couponDAO = new Dao.DBCouponDAO();
+        java.util.List<Models.Coupon> coupons = couponDAO.getAllCoupons();
+        if (!coupons.isEmpty()) {
+            StringBuilder couponCodes = new StringBuilder("Available Coupons: ");
+            for (Models.Coupon c : coupons) {
+                couponCodes.append(c.getCode()).append(" ");
+            }
+            lblCouponMessage.setText(couponCodes.toString());
+            lblCouponMessage.setStyle("-fx-text-fill: green;"); // Make it visible/positive
+        }
     }
 
     /**
@@ -81,8 +93,12 @@ public class CartViewController {
     private void handleRemoveItem() {
         CartItem selected = cartTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
+            System.out.println("Removing item from UI: " + selected.getProduct().getName());
             ShoppingCart.getInstance().removeItem(selected);
             updateTotalLabel();
+        } else {
+            System.out.println("No item selected to remove.");
+            showAlert("No Selection", "Please select an item to remove.");
         }
     }
 

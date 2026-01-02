@@ -33,6 +33,12 @@
                         <Font name="System Bold" size="14.0" />
                     </font>
                 </Button>
+
+                <Button mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 15; -fx-cursor: hand;" text="Logout">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Button>
             </children>
             <padding>
                 <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />

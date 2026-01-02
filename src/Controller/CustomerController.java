@@ -56,7 +56,13 @@ public class CustomerController implements Initializable {
         });
 
         // Show user info (mockup)
-        welcomeLabel.setText("Welcome, Zafer");
+        // welcomeLabel.setText("Welcome, Zafer");
+        Models.User currentUser = Service.AuthService.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            welcomeLabel.setText("Welcome, " + currentUser.getFullName());
+        } else {
+            welcomeLabel.setText("Welcome, Guest");
+        }
     }
 
     /**
@@ -104,7 +110,7 @@ public class CustomerController implements Initializable {
     private Node createProductCard(Product product) throws IOException {
         // NOTE: We will create ProductCard.fxml and its controller in the next step.
         // This is how we load reusable components in JavaFX.
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/fxml/ProductCard.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ProductCard.fxml"));
         Node cardNode = loader.load();
 
         // Get the controller of the card to pass data
@@ -128,7 +134,7 @@ public class CustomerController implements Initializable {
     @FXML
     private void handleShowCart() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/fxml/CartView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CartView.fxml"));
 
             javafx.scene.Parent root = loader.load();
             javafx.stage.Stage stage = new javafx.stage.Stage();
@@ -144,5 +150,10 @@ public class CustomerController implements Initializable {
             e.printStackTrace();
             System.err.println("Could not open Cart View. Check file path!");
         }
+    }
+    @FXML
+    private void handleLogout() {
+        Service.AuthService.getInstance().logout();
+        Utils.SceneManager.switchSceneStatic("/fxml/Login.fxml");
     }
 }

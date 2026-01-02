@@ -11,6 +11,8 @@ public class Group09 extends Application {
             // Initialize SceneManager
             Utils.SceneManager.getInstance().setPrimaryStage(stage);
 
+
+
             // Load initial view
             Utils.SceneManager.switchSceneStatic("/fxml/Login.fxml");
 

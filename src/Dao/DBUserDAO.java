@@ -11,7 +11,7 @@ public class DBUserDAO implements UserDAO {
     @Override
     public List<User> getAllCarriers() {
         List<User> carriers = new ArrayList<>();
-        String sql = "SELECT * FROM UserInfo WHERE role = 'CARRIER'";
+        String sql = "SELECT * FROM group09_greengrocer.user_info WHERE role = 'CARRIER'";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -29,7 +29,7 @@ public class DBUserDAO implements UserDAO {
 
     @Override
     public void addUser(User user) {
-        String sql = "INSERT INTO UserInfo (username, password_hash, role, full_name, phone, email, address) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO group09_greengrocer.user_info (username, password_hash, role, full_name, phone, email, address_line) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -57,7 +57,7 @@ public class DBUserDAO implements UserDAO {
 
     @Override
     public void deleteUser(String username) {
-        String sql = "DELETE FROM UserInfo WHERE username = ?";
+        String sql = "DELETE FROM group09_greengrocer.user_info WHERE username = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -73,7 +73,7 @@ public class DBUserDAO implements UserDAO {
     @Override
     public void updateUser(User user) {
         // ID is safer but username is unique, and prompt uses username.
-        String sql = "UPDATE UserInfo SET full_name=?, phone=?, email=?, address=? WHERE username=?";
+        String sql = "UPDATE group09_greengrocer.user_info SET full_name=?, phone=?, email=?, address_line=? WHERE username=?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -99,7 +99,7 @@ public class DBUserDAO implements UserDAO {
         user.setFullName(rs.getString("full_name"));
         user.setPhone(rs.getString("phone"));
         user.setEmail(rs.getString("email"));
-        user.setAddress(rs.getString("address"));
+        user.setAddress(rs.getString("address_line"));
         user.setRole(rs.getString("role"));
         user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
         return user;

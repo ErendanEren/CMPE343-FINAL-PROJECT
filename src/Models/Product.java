@@ -19,8 +19,9 @@ public class Product {
     private double thresholdKg;
 
     private String imagePath;
-    
     private byte[] imageContent;
+
+
 
     private boolean isActive;
 
@@ -108,6 +109,8 @@ public class Product {
 
     public String getImagePath() { return imagePath; }
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
+
+
 
     public boolean isActive() { return isActive; }
     public void setActive(boolean active) { isActive = active; }

@@ -20,7 +20,7 @@ public class RegisterController {
     private AuthService authService;
 
     public RegisterController() {
-        this.authService = new AuthService();
+        this.authService = AuthService.getInstance();
     }
 
     @FXML

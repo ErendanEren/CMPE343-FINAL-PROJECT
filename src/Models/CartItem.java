@@ -53,4 +53,17 @@ public class CartItem {
         return String.format("%s - %.2f kg - Total: %.2f TL",
                 product.getName(), quantity, getItemTotal());
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CartItem cartItem = (CartItem) o;
+        return product.getId() == cartItem.product.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(product.getId());
+    }
 }
