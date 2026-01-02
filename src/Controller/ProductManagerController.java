@@ -19,12 +19,6 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/**
- * Controller class for managing the product inventory.
- * Provides CRUD operations and table management for products.
- * * @author Selçuk Aloba
- * @author Eren Çakır Bircan
- */
 public class ProductManagerController implements Initializable {
 
     @FXML private TableView<Product> tableProducts;
@@ -44,33 +38,23 @@ public class ProductManagerController implements Initializable {
     @FXML private MFXButton btnUpdate;
     @FXML private MFXButton btnDelete;
 
+    // Veri erişim nesnemiz (DB)
     private ProductDAO productDAO = new DBProductDAO();
     private ObservableList<Product> productList;
     private String selectedImagePath = "";
 
-    /**
-     * Initializes the controller class. Sets up the UI components,
-     * table columns, and loads initial data from the database.
-     * * @param location  The location used to resolve relative paths for the root object.
-     * @param resources The resources used to localize the root object.
-     * @author Selçuk Aloba
-     * @author Eren Çakır Bircan
-     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setupTable();
         loadData();
         setupActions();
 
+        // ComboBox doldur
         comboType.setItems(FXCollections.observableArrayList("FRUIT", "VEGETABLE"));
     }
 
-    /**
-     * Configures the TableView columns by mapping them to the Product model properties.
-     * * @author Selçuk Aloba
-     * @author Eren Çakır Bircan
-     */
     private void setupTable() {
+        // Product.java içindeki getter isimleriyle eşleşmeli
         colName.setCellValueFactory(new PropertyValueFactory<>("name"));
         colType.setCellValueFactory(new PropertyValueFactory<>("type"));
         colPrice.setCellValueFactory(new PropertyValueFactory<>("pricePerKg"));
@@ -78,23 +62,13 @@ public class ProductManagerController implements Initializable {
         colThreshold.setCellValueFactory(new PropertyValueFactory<>("thresholdKg"));
     }
 
-    /**
-     * Retrieves all product data from the database and refreshes the TableView.
-     * * @author Selçuk Aloba
-     * @author Eren Çakır Bircan
-     */
     private void loadData() {
         productList = FXCollections.observableArrayList(productDAO.getAllProducts());
         tableProducts.setItems(productList);
     }
 
-    /**
-     * Configures event listeners for the buttons and table selection
-     * to handle adding, updating, and deleting products.
-     * * @author Selçuk Aloba
-     * @author Eren Çakır Bircan
-     */
     private void setupActions() {
+        // Resim Seçme
         btnChooseImage.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Ürün Resmi Seç");
@@ -106,6 +80,7 @@ public class ProductManagerController implements Initializable {
             }
         });
 
+        // Ekleme
         btnAdd.setOnAction(event -> {
             try {
                 String name = txtName.getText();
@@ -114,6 +89,7 @@ public class ProductManagerController implements Initializable {
                 double stock = Double.parseDouble(txtStock.getText());
                 double threshold = Double.parseDouble(txtThreshold.getText());
 
+                // ID is 0 for new products, DB will auto-increment
                 Product newProduct = new Product(0, name, type, price, stock, threshold, selectedImagePath);
                 productDAO.addProduct(newProduct);
                 loadData();
@@ -124,4 +100,61 @@ public class ProductManagerController implements Initializable {
             }
         });
 
-        tableProducts.getSelectionModel
+        // Tablodan seçim
+        tableProducts.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                txtName.setText(newSelection.getName());
+                txtPrice.setText(String.valueOf(newSelection.getPricePerKg()));
+                txtStock.setText(String.valueOf(newSelection.getStockKg()));
+                txtThreshold.setText(String.valueOf(newSelection.getThresholdKg()));
+                comboType.setValue(newSelection.getType());
+                selectedImagePath = newSelection.getImagePath();
+            }
+        });
+
+        // Güncelleme
+        btnUpdate.setOnAction(event -> {
+            Product selected = tableProducts.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                try {
+                    selected.setName(txtName.getText());
+                    selected.setType(comboType.getValue());
+                    selected.setPricePerKg(Double.parseDouble(txtPrice.getText()));
+                    selected.setStockKg(Double.parseDouble(txtStock.getText()));
+                    selected.setThresholdKg(Double.parseDouble(txtThreshold.getText()));
+                    if (!selectedImagePath.isEmpty()) {
+                        selected.setImagePath(selectedImagePath);
+                    }
+
+                    productDAO.updateProduct(selected);
+                    loadData();
+                    clearForm();
+                    System.out.println("Ürün güncellendi: " + selected.getName());
+                } catch (Exception e) {
+                    System.out.println("Güncelleme hatası: " + e.getMessage());
+                }
+            }
+        });
+
+        // Silme
+        btnDelete.setOnAction(event -> {
+            Product selected = tableProducts.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                productDAO.deleteProduct(selected.getId());
+                loadData();
+                clearForm();
+                System.out.println("Ürün silindi: " + selected.getName());
+            }
+        });
+    }
+
+    private void clearForm() {
+        txtName.clear();
+        txtPrice.clear();
+        txtStock.clear();
+        txtThreshold.clear();
+        comboType.clearSelection();
+        selectedImagePath = "";
+        btnChooseImage.setText("Resim Seç");
+    }
+}

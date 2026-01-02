@@ -43,11 +43,6 @@ public class CartViewController {
     private OrderService orderService = new OrderService();
     private static final double MIN_CART_VALUE = 50.0;
 
-    /**
-     * Initializes the cart view by binding table columns to data properties,
-     * loading items from the ShoppingCart singleton, and setting up delivery time slots.
-     * * @author Eren Çakır Bircan
-     */
     @FXML
     public void initialize() {
         // Bind columns to CartItem properties
@@ -80,8 +75,7 @@ public class CartViewController {
     }
 
     /**
-     * Removes the selected item from the shopping cart and refreshes the total price.
-     * * @author Zafer Mert Serinken
+     * Removes the selected item from the cart and refreshes the total.
      */
     @FXML
     private void handleRemoveItem() {
@@ -92,10 +86,6 @@ public class CartViewController {
         }
     }
 
-    /**
-     * Validates and applies the coupon code entered in the text field to the current cart session.
-     * * @author Eren Çakır Bircan
-     */
     @FXML
     private void handleApplyCoupon() {
         String code = txtCouponCode.getText();
@@ -118,14 +108,13 @@ public class CartViewController {
     }
 
     /**
-     * Updates the total price label displayed in the UI, considering VAT and any applied coupons.
-     * * @author Zafer Mert Serinken
+     * Updates the total price label including VAT text.
      */
     private void updateTotalLabel() {
         double total = ShoppingCart.getInstance().calculateTotal();
         // Assuming VAT is included or calculated here.
 
-        // Project doc says "total cost including taxes (VAT)"
+        // Project doc says "total cost including taxes (VAT)" [cite: 32]
         if (ShoppingCart.getInstance().getAppliedCoupon() != null) {
             totalPriceLabel.setText(String.format("Total: %.2f TL (Coupon Applied)", total));
         } else {
@@ -133,11 +122,6 @@ public class CartViewController {
         }
     }
 
-    /**
-     * Validates user authentication, minimum order requirements, and delivery information
-     * before finalizing the order via OrderService.
-     * * @author Eren Çakır Bircan
-     */
     @FXML
     private void handleCheckout() {
         User user = AuthService.getInstance().getCurrentUser();
@@ -186,12 +170,6 @@ public class CartViewController {
         }
     }
 
-    /**
-     * Displays a graphical information alert with a specific title and message.
-     * * @param title the title of the alert window
-     * @param content the message content to be shown
-     * @author Zafer Mert Serinken
-     */
     private void showAlert(String title, String content) {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle(title);
@@ -200,10 +178,6 @@ public class CartViewController {
         alert.showAndWait();
     }
 
-    /**
-     * Closes the current shopping cart window and returns to the previous scene.
-     * * @author Eren Çakır Bircan
-     */
     @FXML
     private void handleBack() {
         // Close the cart window

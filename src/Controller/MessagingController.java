@@ -10,10 +10,8 @@ import javafx.scene.control.*;
 import java.util.List;
 
 /**
- * Controller class for managing the shared messaging system.
- * Responsible for the system's messaging infrastructure and communication handling.
- *
- * @author Arda Dülger
+ * Ortak mesajlaşma sistemini yöneten sınıf.
+ * Member 4 sorumluluğu: Sistem Mesajlaşması altyapısı.
  */
 public class MessagingController {
 
@@ -23,18 +21,14 @@ public class MessagingController {
 
     private MessageDao messageDao = new MessageDao();
     private User currentUser;
-    private int targetUserId;
+    private int targetUserId; // Mesajlaşılan kişinin ID'si
 
-    /**
-     * Initializes the messaging controller. Retrieves the logged-in user
-     * and target contact information from the SceneManager.
-     *
-     * @author Arda Dülger
-     */
     @FXML
     public void initialize() {
+        // Altyapı: Giriş yapan kullanıcıyı sistemden çek [cite: 95]
         this.currentUser = (User) SceneManager.getData("currentUser");
 
+        // Diğer modüllerden (Kurye/Müşteri) gelen hedef kullanıcı bilgisini al
         Object target = SceneManager.getData("targetUserId");
         if (target != null) {
             this.targetUserId = (int) target;
@@ -44,12 +38,6 @@ public class MessagingController {
         handleRefresh();
     }
 
-    /**
-     * Handles the message sending process. Validates input content,
-     * creates a Message object, and persists it via MessageDao.
-     *
-     * @author Arda Dülger
-     */
     @FXML
     private void handleSend() {
         String content = txtMessageInput.getText().trim();
@@ -60,26 +48,23 @@ public class MessagingController {
         msg.setReceiverId(this.targetUserId);
         msg.setContent(content);
 
+        // Altyapı: Mesajı veritabanına kaydet [cite: 63]
         if (messageDao.sendMessage(msg)) {
             txtMessageInput.clear();
             handleRefresh();
         }
     }
 
-    /**
-     * Refreshes the message list view by fetching chronological messages
-     * from the database and applying directional visual labels.
-     *
-     * @author Arda Dülger
-     */
     @FXML
     private void handleRefresh() {
         if (currentUser == null) return;
 
+        // Veritabanındaki mesajları kronolojik olarak çek
         List<Message> messages = messageDao.getMessagesForUser(currentUser.getId());
         messageListView.getItems().clear();
 
         for (Message m : messages) {
+            // Mesajın yönüne göre görsel etiket ekle
             String senderLabel = (m.getSenderId() == currentUser.getId()) ? "[SİZ]: " : "[GELEN]: ";
             messageListView.getItems().add(senderLabel + m.getContent());
         }
