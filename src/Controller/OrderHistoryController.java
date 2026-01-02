@@ -15,12 +15,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
-/**
- * Controller class for managing the Order History interface.
- * Allows users to view their past orders, status, and generate invoices.
- *
- * @author Arda Dülger
- */
 public class OrderHistoryController {
 
     @FXML private TableView<Order> historyTable;
@@ -33,12 +27,6 @@ public class OrderHistoryController {
     private OrderService orderService = new OrderService();
     private User currentUser;
 
-    /**
-     * Initializes the controller class. Sets up table column bindings and
-     * triggers the initial loading of order data for the current user.
-     *
-     * @author Arda Dülger
-     */
     @FXML
     public void initialize() {
         currentUser = AuthService.getInstance().getCurrentUser();
@@ -56,26 +44,14 @@ public class OrderHistoryController {
         loadOrders();
     }
 
-    /**
-     * Fetches order history data from the database based on the current user's ID
-     * and populates the history table.
-     *
-     * @author Arda Dülger
-     */
     private void loadOrders() {
         if (currentUser != null) {
             historyTable.setItems(FXCollections.observableArrayList(
-                    orderDao.getOrdersByCustomer(currentUser.getId())
+                    orderDao.getOrdersByCustomer(currentUser.getId()) // Ensure User class has getId()
             ));
         }
     }
 
-    /**
-     * Generates a text-based invoice for the selected order in the table
-     * and displays it through the system console and a user alert.
-     *
-     * @author Arda Dülger
-     */
     @FXML
     private void handleViewInvoice() {
         Order selected = historyTable.getSelectionModel().getSelectedItem();
@@ -89,13 +65,6 @@ public class OrderHistoryController {
         }
     }
 
-    /**
-     * Helper method to display an information alert dialog.
-     *
-     * @param title The title of the alert window.
-     * @param content The information message to be displayed.
-     * @author Arda Dülger
-     */
     private void showAlert(String title, String content) {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle(title);
