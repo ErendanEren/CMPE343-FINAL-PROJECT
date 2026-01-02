@@ -63,7 +63,9 @@ public class ProductManagerController implements Initializable {
     }
 
     private void loadData() {
+        System.out.println("ProductManagerController: Loading data...");
         productList = FXCollections.observableArrayList(productDAO.getAllProducts());
+        System.out.println("ProductManagerController: List size: " + productList.size());
         tableProducts.setItems(productList);
     }
 
@@ -81,6 +83,7 @@ public class ProductManagerController implements Initializable {
         });
 
         // Ekleme
+        // Ekleme
         btnAdd.setOnAction(event -> {
             try {
                 String name = txtName.getText();
@@ -89,14 +92,28 @@ public class ProductManagerController implements Initializable {
                 double stock = Double.parseDouble(txtStock.getText());
                 double threshold = Double.parseDouble(txtThreshold.getText());
 
+                byte[] imageBytes = null;
+                String mimeType = null;
+                if (!selectedImagePath.isEmpty()) {
+                    File imgFile = new File(selectedImagePath);
+                    imageBytes = java.nio.file.Files.readAllBytes(imgFile.toPath());
+                    mimeType = java.nio.file.Files.probeContentType(imgFile.toPath());
+                    // Fallback if probe fails
+                    if(mimeType == null) {
+                        if(selectedImagePath.endsWith(".png")) mimeType = "image/png";
+                        else if(selectedImagePath.endsWith(".jpg") || selectedImagePath.endsWith(".jpeg")) mimeType = "image/jpeg";
+                    }
+                }
+
                 // ID is 0 for new products, DB will auto-increment
-                Product newProduct = new Product(0, name, type, price, stock, threshold, selectedImagePath);
+                Product newProduct = new Product(0, name, type, price, stock, threshold, imageBytes, mimeType);
                 productDAO.addProduct(newProduct);
                 loadData();
                 clearForm();
 
             } catch (Exception e) {
                 System.out.println("Hata: " + e.getMessage());
+                e.printStackTrace();
             }
         });
 
@@ -108,7 +125,7 @@ public class ProductManagerController implements Initializable {
                 txtStock.setText(String.valueOf(newSelection.getStockKg()));
                 txtThreshold.setText(String.valueOf(newSelection.getThresholdKg()));
                 comboType.setValue(newSelection.getType());
-                selectedImagePath = newSelection.getImagePath();
+                selectedImagePath = ""; // Reset path on selection, unless re-selected
             }
         });
 
@@ -122,8 +139,19 @@ public class ProductManagerController implements Initializable {
                     selected.setPricePerKg(Double.parseDouble(txtPrice.getText()));
                     selected.setStockKg(Double.parseDouble(txtStock.getText()));
                     selected.setThresholdKg(Double.parseDouble(txtThreshold.getText()));
+
                     if (!selectedImagePath.isEmpty()) {
-                        selected.setImagePath(selectedImagePath);
+                        File imgFile = new File(selectedImagePath);
+                        byte[] imageBytes = java.nio.file.Files.readAllBytes(imgFile.toPath());
+                        String mimeType = java.nio.file.Files.probeContentType(imgFile.toPath());
+                        if(mimeType == null) {
+                            if(selectedImagePath.endsWith(".png")) mimeType = "image/png";
+                            else if(selectedImagePath.endsWith(".jpg") || selectedImagePath.endsWith(".jpeg")) mimeType = "image/jpeg";
+                        }
+
+                        selected.setImageContent(imageBytes);
+                        selected.setMimeType(mimeType);
+                        selected.setImagePath(null); // Clear path as we use blob
                     }
 
                     productDAO.updateProduct(selected);
@@ -132,6 +160,7 @@ public class ProductManagerController implements Initializable {
                     System.out.println("Ürün güncellendi: " + selected.getName());
                 } catch (Exception e) {
                     System.out.println("Güncelleme hatası: " + e.getMessage());
+                    e.printStackTrace();
                 }
             }
         });

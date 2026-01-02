@@ -22,13 +22,15 @@ public class DBProductDAO implements ProductDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            System.err.println("DBProductDAO Error: " + e.getMessage());
         }
+        System.out.println("DBProductDAO: Loaded " + products.size() + " products.");
         return products;
     }
 
     @Override
     public void addProduct(Product product) {
-        String sql = "INSERT INTO group09_greengrocer.product_info (name, type, price_per_kg, stock_kg, threshold_kg, image_blob, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO group09_greengrocer.product_info (name, type, price_per_kg, stock_kg, threshold_kg, image_blob, image_mime, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -37,10 +39,10 @@ public class DBProductDAO implements ProductDAO {
             ps.setDouble(3, product.getPricePerKg());
             ps.setDouble(4, product.getStockKg());
             ps.setDouble(5, product.getThresholdKg());
-            ps.setDouble(5, product.getThresholdKg());
             // Store imageContent if available, else null
             ps.setBytes(6, product.getImageContent());
-            ps.setBoolean(7, product.isActive());
+            ps.setString(7, product.getMimeType());
+            ps.setBoolean(8, product.isActive());
 
             ps.executeUpdate();
             System.out.println("DB: Product added -> " + product.getName());
@@ -59,7 +61,7 @@ public class DBProductDAO implements ProductDAO {
         // Actually Product has ID. Let's rely on ID for safe updates if possible.
         // However, the object passed from UI might just be updated fields.
 
-        String sql = "UPDATE group09_greengrocer.product_info SET name=?, type=?, price_per_kg=?, stock_kg=?, threshold_kg=?, image_blob=?, is_active=? WHERE id=?";
+        String sql = "UPDATE group09_greengrocer.product_info SET name=?, type=?, price_per_kg=?, stock_kg=?, threshold_kg=?, image_blob=?, image_mime=?, is_active=? WHERE id=?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -68,10 +70,11 @@ public class DBProductDAO implements ProductDAO {
             ps.setDouble(3, product.getPricePerKg());
             ps.setDouble(4, product.getStockKg());
             ps.setDouble(5, product.getThresholdKg());
-            ps.setDouble(5, product.getThresholdKg());
+            // Store imageContent if available, else null
             ps.setBytes(6, product.getImageContent());
-            ps.setBoolean(7, product.isActive());
-            ps.setInt(8, product.getId());
+            ps.setString(7, product.getMimeType());
+            ps.setBoolean(8, product.isActive());
+            ps.setInt(9, product.getId());
 
             int affected = ps.executeUpdate();
             if (affected == 0) {
@@ -129,6 +132,12 @@ public class DBProductDAO implements ProductDAO {
         p.setStockKg(rs.getDouble("stock_kg"));
         p.setThresholdKg(rs.getDouble("threshold_kg"));
         p.setImageContent(rs.getBytes("image_blob"));
+        try {
+            p.setMimeType(rs.getString("image_mime"));
+        } catch (SQLException e) {
+            // Column might not exist in older DB versions, ignore
+            p.setMimeType(null);
+        }
         // p.setImagePath(rs.getString("image_blob")); // usually this fails if blob, redundant now
         p.setActive(rs.getBoolean("is_active"));
         return p;

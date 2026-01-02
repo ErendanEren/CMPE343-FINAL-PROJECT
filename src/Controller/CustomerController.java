@@ -152,6 +152,22 @@ public class CustomerController implements Initializable {
         }
     }
     @FXML
+    private void handleShowProfile() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Profile.fxml"));
+            javafx.scene.Parent root = loader.load();
+            javafx.stage.Stage stage = new javafx.stage.Stage();
+            stage.setTitle("My Profile");
+            stage.setScene(new javafx.scene.Scene(root));
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Could not open Profile View.");
+        }
+    }
+
+    @FXML
     private void handleLogout() {
         Service.AuthService.getInstance().logout();
         Utils.SceneManager.switchSceneStatic("/fxml/Login.fxml");

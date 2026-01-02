@@ -13,7 +13,6 @@ public class SceneManager {
 
     private static SceneManager instance;
     private Stage primaryStage;
-    private final Map<String, Scene> scenes = new HashMap<>();
 
     private SceneManager() {}
 
@@ -30,15 +29,10 @@ public class SceneManager {
 
     public void switchScene(String fxmlPath) {
         try {
-            if (scenes.containsKey(fxmlPath)) {
-                primaryStage.setScene(scenes.get(fxmlPath));
-            } else {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-                Parent root = loader.load();
-                Scene scene = new Scene(root);
-                scenes.put(fxmlPath, scene);
-                primaryStage.setScene(scene);
-            }
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
             primaryStage.show();
         } catch (IOException e) {
             System.err.println("Failed to load scene: " + fxmlPath);

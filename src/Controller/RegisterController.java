@@ -34,6 +34,12 @@ public class RegisterController {
             return;
         }
 
+        // Name Validation
+        if (!Utils.ValidationUtils.validateNameField(fullNameField, "Full Name")) {
+            statusLabel.setText("Invalid Name: Use letters only.");
+            return;
+        }
+
         boolean success = authService.register(
                 u, p,
                 fullNameField.getText(),

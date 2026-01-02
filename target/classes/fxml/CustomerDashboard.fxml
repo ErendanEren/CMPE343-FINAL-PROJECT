@@ -34,6 +34,12 @@
                     </font>
                 </Button>
 
+                <Button mnemonicParsing="false" onAction="#handleShowProfile" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 15; -fx-cursor: hand;" text="👤 Profile">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Button>
+
                 <Button mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 15; -fx-cursor: hand;" text="Logout">
                     <font>
                         <Font name="System Bold" size="14.0" />

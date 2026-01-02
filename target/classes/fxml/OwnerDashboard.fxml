@@ -27,7 +27,7 @@
                     </VBox.margin>
                 </Label>
 
-                <MFXButton fx:id="btnProducts" alignment="BASELINE_LEFT" prefHeight="50.0" prefWidth="220.0" style="-fx-background-color: transparent; -fx-text-fill: white;" text="📦  Ürün Yönetimi">
+                <MFXButton fx:id="btnProducts" alignment="BASELINE_LEFT" prefHeight="50.0" prefWidth="220.0" style="-fx-background-color: transparent; -fx-text-fill: white;" text="📦  Product Management">
                     <font>
                         <Font size="16.0" />
                     </font>
@@ -36,7 +36,7 @@
                     </padding>
                 </MFXButton>
 
-                <MFXButton fx:id="btnStaff" alignment="BASELINE_LEFT" prefHeight="50.0" prefWidth="220.0" style="-fx-background-color: transparent; -fx-text-fill: white;" text="👥  Personel / Kurye">
+                <MFXButton fx:id="btnStaff" alignment="BASELINE_LEFT" prefHeight="50.0" prefWidth="220.0" style="-fx-background-color: transparent; -fx-text-fill: white;" text="👥  Staff / Carrier">
                     <font>
                         <Font size="16.0" />
                     </font>
@@ -45,7 +45,7 @@
                     </padding>
                 </MFXButton>
 
-                <MFXButton fx:id="btnReports" alignment="BASELINE_LEFT" prefHeight="50.0" prefWidth="220.0" style="-fx-background-color: transparent; -fx-text-fill: white;" text="📊  Raporlar">
+                <MFXButton fx:id="btnReports" alignment="BASELINE_LEFT" prefHeight="50.0" prefWidth="220.0" style="-fx-background-color: transparent; -fx-text-fill: white;" text="📊  Reports">
                     <font>
                         <Font size="16.0" />
                     </font>
@@ -54,7 +54,7 @@
                     </padding>
                 </MFXButton>
 
-                <Region VBox.vgrow="ALWAYS" /> <MFXButton fx:id="btnLogout" alignment="BASELINE_LEFT" prefHeight="50.0" prefWidth="220.0" style="-fx-background-color: #c0392b; -fx-text-fill: white;" text="Çıkış Yap">
+                <Region VBox.vgrow="ALWAYS" /> <MFXButton fx:id="btnLogout" alignment="BASELINE_LEFT" prefHeight="50.0" prefWidth="220.0" style="-fx-background-color: #c0392b; -fx-text-fill: white;" text="Logout">
                 <font>
                     <Font name="System Bold" size="14.0" />
                 </font>
@@ -72,7 +72,7 @@
     <center>
         <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ecf0f1;" BorderPane.alignment="CENTER">
             <children>
-                <Label layoutX="325.0" layoutY="319.0" text="Hoşgeldiniz, lütfen soldan bir işlem seçin." textFill="#7f8c8d">
+                <Label layoutX="325.0" layoutY="319.0" text="Welcome, please select an option from the menu." textFill="#7f8c8d">
                     <font>
                         <Font size="18.0" />
                     </font>
