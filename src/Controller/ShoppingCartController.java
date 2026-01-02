@@ -15,6 +15,11 @@ import javafx.stage.Stage;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
+/**
+ * Controller class for the Shopping Cart interface.
+ * Manages the display of items, removal of products, and the checkout process.
+ * * @author Eren Çakır Bircan
+ */
 public class ShoppingCartController {
 
     @FXML private TableView<CartItem> cartTable;
@@ -26,6 +31,11 @@ public class ShoppingCartController {
 
     private OrderService orderService = new OrderService();
 
+    /**
+     * Initializes the shopping cart view. Sets up table column bindings and
+     * attaches a listener to the cart items to update the total price automatically.
+     * * @author Eren Çakır Bircan
+     */
     @FXML
     public void initialize() {
         nameColumn.setCellValueFactory(cellData ->
@@ -41,7 +51,6 @@ public class ShoppingCartController {
 
         cartTable.setItems(ShoppingCart.getInstance().getItems());
 
-        // Listener to update total when items change
         ShoppingCart.getInstance().getItems().addListener((javafx.collections.ListChangeListener.Change<? extends CartItem> c) -> {
             updateTotalLabel();
         });
@@ -49,6 +58,11 @@ public class ShoppingCartController {
         updateTotalLabel();
     }
 
+    /**
+     * Handles the removal of a selected item from the shopping cart.
+     * If no item is selected, it displays an error alert.
+     * * @author Eren Çakır Bircan
+     */
     @FXML
     private void handleRemoveItem() {
         CartItem selected = cartTable.getSelectionModel().getSelectedItem();
@@ -60,6 +74,11 @@ public class ShoppingCartController {
         }
     }
 
+    /**
+     * Handles the checkout operation. Validates the cart status, creates a new order,
+     * generates an invoice, and closes the cart window upon success.
+     * * @author Eren Çakır Bircan
+     */
     @FXML
     private void handleCheckout() {
         if (ShoppingCart.getInstance().getItems().isEmpty()) {
@@ -68,18 +87,16 @@ public class ShoppingCartController {
         }
 
         try {
-            // Mocking a loaded user
             User currentUser = new User("customer", "pass", "John Doe", "555-1234", "john@example.com", "My Home Address", "CUSTOMER");
             currentUser.setId(1);
 
             Order order = orderService.placeOrder(currentUser, ShoppingCart.getInstance(), "Not Selected (Legacy Cart)");
 
             String invoice = orderService.generateInvoice(order);
-            System.out.println(invoice); // Print invoice to console for now
+            System.out.println(invoice);
 
             showAlert("Order Placed", "Your order has been placed successfully!\nCheck console for invoice.");
 
-            // Close the cart window
             closeWindow();
         } catch (Exception e) {
             showAlert("Error", "Checkout failed: " + e.getMessage());
@@ -87,21 +104,39 @@ public class ShoppingCartController {
         }
     }
 
+    /**
+     * Closes the shopping cart window and returns to the previous screen.
+     * * @author Eren Çakır Bircan
+     */
     @FXML
     private void handleBack() {
         closeWindow();
     }
 
+    /**
+     * Updates the total price label with the current calculation from the ShoppingCart singleton.
+     * * @author Eren Çakır Bircan
+     */
     private void updateTotalLabel() {
         double total = ShoppingCart.getInstance().calculateTotal();
         totalPriceLabel.setText(String.format("Total: %.2f TL", total));
     }
 
+    /**
+     * Closes the current stage (window).
+     * * @author Eren Çakır Bircan
+     */
     private void closeWindow() {
         Stage stage = (Stage) cartTable.getScene().getWindow();
         stage.close();
     }
 
+    /**
+     * Displays a graphical information alert to the user.
+     * * @param title The title of the alert window.
+     * @param content The text message to be shown.
+     * @author Eren Çakır Bircan
+     */
     private void showAlert(String title, String content) {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle(title);
